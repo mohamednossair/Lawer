@@ -1,0 +1,102 @@
+entity Court {
+  court_name String required
+}
+
+entity Lawyer {
+  lawyer_name String required
+  address String
+  contact_number String
+  specialization String
+  email String
+  registration_number String
+  created_at ZonedDateTime
+  updated_at ZonedDateTime
+}
+
+entity Client {
+  client_name String required
+  client_description String
+  contact_number String required
+  address String
+  national_id String
+  email String
+  created_at ZonedDateTime
+  updated_at ZonedDateTime
+}
+
+entity CourtCaseType {
+  case_type_name String required
+}
+
+entity CaseStatus {
+  case_status_name String required
+}
+entity CourtCase {
+  client_id Long required
+  court_id Long
+  court_case_type_id Long
+  case_status_id Long
+  opponent_lawyer_id Long
+  number String required
+  year String required
+  court_circuit String
+  registration_date LocalDate required
+  attorney_number String
+  attorney_year Integer
+  attorney_authentication String
+  opponent_name String
+  opponent_description String
+  opponent_address String
+  subject String required
+  notes String
+  created_at ZonedDateTime
+  updated_at ZonedDateTime
+}
+
+entity CaseSession {
+  session_date LocalDate required
+  session_time ZonedDateTime
+  description String
+  notes String
+  created_at ZonedDateTime
+  updated_at ZonedDateTime
+}
+
+entity CaseDocument {
+  document_name String
+  document_type String
+  file_path String
+  uploaded_by Integer
+  created_at ZonedDateTime
+  updated_at ZonedDateTime
+}
+
+relationship ManyToOne {
+  CourtCase{court} to Court
+  CourtCase{client} to Client
+  CourtCase{courtCaseType} to CourtCaseType
+  CourtCase{caseStatus} to CaseStatus
+}
+
+relationship OneToMany {
+  Lawyer{courtCases} to CourtCase
+}
+
+relationship ManyToOne {
+  CaseSession{courtCase} to CourtCase
+}
+
+relationship ManyToOne {
+  CaseDocument{courtCase} to CourtCase
+  CaseDocument{lawyer} to Lawyer
+}
+
+dto Court, Lawyer, Client, CourtCaseType, CaseStatus, CourtCase, CaseSession, CaseDocument with mapstruct
+
+service all with serviceClass
+
+paginate CourtCase, CaseSession, CaseDocument with pagination
+
+microservice Court, Lawyer, Client, CourtCaseType, CaseStatus, CourtCase, CaseSession, CaseDocument with cms
+
+
