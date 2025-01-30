@@ -1,0 +1,42 @@
+{
+  "lawyerApp": {
+    "courtCase": {
+      "home": {
+        "title": "Court Cases",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Court Case",
+        "createOrEditLabel": "Create or edit a Court Case",
+        "notFound": "No Court Cases found"
+      },
+      "created": "A new Court Case is created with identifier {{ param }}",
+      "updated": "A Court Case is updated with identifier {{ param }}",
+      "deleted": "A Court Case is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Court Case {{ id }}?"
+      },
+      "detail": {
+        "title": "Court Case"
+      },
+      "id": "ID",
+      "number": "Number",
+      "caseYear": "Case Year",
+      "courtCircuit": "Court Circuit",
+      "registrationDate": "Registration Date",
+      "attorneyNumber": "Attorney Number",
+      "attorneyYear": "Attorney Year",
+      "attorneyAuthentication": "Attorney Authentication",
+      "opponentName": "Opponent Name",
+      "opponentDescription": "Opponent Description",
+      "opponentAddress": "Opponent Address",
+      "subject": "Subject",
+      "notes": "Notes",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At",
+      "court": "Court",
+      "client": "Client",
+      "courtCaseType": "Court Case Type",
+      "caseStatus": "Case Status",
+      "opponentLawyerId": "Opponent Lawyer Id"
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "lawyerApp": {
+    "caseDocument": {
+      "home": {
+        "title": "Case Documents",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Case Document",
+        "createOrEditLabel": "Create or edit a Case Document",
+        "notFound": "No Case Documents found"
+      },
+      "created": "A new Case Document is created with identifier {{ param }}",
+      "updated": "A Case Document is updated with identifier {{ param }}",
+      "deleted": "A Case Document is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Case Document {{ id }}?"
+      },
+      "detail": {
+        "title": "Case Document"
+      },
+      "id": "ID",
+      "documentName": "Document Name",
+      "documentType": "Document Type",
+      "filePath": "File Path",
+      "uploadedBy": "Uploaded By",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At",
+      "courtCase": "Court Case",
+      "user": "User"
+    }
+  }
+}

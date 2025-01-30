@@ -1,0 +1,42 @@
+{
+  "lawyerApp": {
+    "courtCase": {
+      "home": {
+        "title": "Court Cases",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء Court Case جديد",
+        "createOrEditLabel": "إنشاء أو تعديل Court Case",
+        "notFound": "لم يتم العثور على Court Cases"
+      },
+      "created": "Court Case جديد تم إنشاؤه بالمعرف {{ param }}",
+      "updated": "Court Case تم تحديثه بالمعرف {{ param }}",
+      "deleted": "Court Case تم حذفه بالمعرف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف Court Case {{ id }}؟"
+      },
+      "detail": {
+        "title": "Court Case"
+      },
+      "id": "ID",
+      "number": "Number",
+      "caseYear": "Case Year",
+      "courtCircuit": "Court Circuit",
+      "registrationDate": "Registration Date",
+      "attorneyNumber": "Attorney Number",
+      "attorneyYear": "Attorney Year",
+      "attorneyAuthentication": "Attorney Authentication",
+      "opponentName": "Opponent Name",
+      "opponentDescription": "Opponent Description",
+      "opponentAddress": "Opponent Address",
+      "subject": "Subject",
+      "notes": "Notes",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At",
+      "court": "Court",
+      "client": "Client",
+      "courtCaseType": "Court Case Type",
+      "caseStatus": "Case Status",
+      "opponentLawyerId": "Opponent Lawyer Id"
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "lawyerApp": {
+    "client": {
+      "home": {
+        "title": "Clients",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء Client جديد",
+        "createOrEditLabel": "إنشاء أو تعديل Client",
+        "notFound": "لم يتم العثور على Clients"
+      },
+      "created": "Client جديد تم إنشاؤه بالمعرف {{ param }}",
+      "updated": "Client تم تحديثه بالمعرف {{ param }}",
+      "deleted": "Client تم حذفه بالمعرف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف Client {{ id }}؟"
+      },
+      "detail": {
+        "title": "Client"
+      },
+      "id": "ID",
+      "clientName": "Client Name",
+      "clientDescription": "Client Description",
+      "contactNumber": "Contact Number",
+      "address": "Address",
+      "nationalId": "National Id",
+      "email": "Email",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At"
+    }
+  }
+}

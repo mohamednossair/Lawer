@@ -50,6 +50,14 @@ public class CacheConfiguration {
             createCache(cm, com.lawyer.domain.User.class.getName());
             createCache(cm, com.lawyer.domain.Authority.class.getName());
             createCache(cm, com.lawyer.domain.User.class.getName() + ".authorities");
+            createCache(cm, com.lawyer.domain.CaseDocument.class.getName());
+            createCache(cm, com.lawyer.domain.CaseSession.class.getName());
+            createCache(cm, com.lawyer.domain.CaseStatus.class.getName());
+            createCache(cm, com.lawyer.domain.Client.class.getName());
+            createCache(cm, com.lawyer.domain.Court.class.getName());
+            createCache(cm, com.lawyer.domain.CourtCase.class.getName());
+            createCache(cm, com.lawyer.domain.CourtCaseType.class.getName());
+            createCache(cm, com.lawyer.domain.Lawyer.class.getName());
             // jhipster-needle-ehcache-add-entry
         };
     }

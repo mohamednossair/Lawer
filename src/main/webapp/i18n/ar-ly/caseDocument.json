@@ -1,0 +1,31 @@
+{
+  "lawyerApp": {
+    "caseDocument": {
+      "home": {
+        "title": "Case Documents",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء Case Document جديد",
+        "createOrEditLabel": "إنشاء أو تعديل Case Document",
+        "notFound": "لم يتم العثور على Case Documents"
+      },
+      "created": "Case Document جديد تم إنشاؤه بالمعرف {{ param }}",
+      "updated": "Case Document تم تحديثه بالمعرف {{ param }}",
+      "deleted": "Case Document تم حذفه بالمعرف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف Case Document {{ id }}؟"
+      },
+      "detail": {
+        "title": "Case Document"
+      },
+      "id": "ID",
+      "documentName": "Document Name",
+      "documentType": "Document Type",
+      "filePath": "File Path",
+      "uploadedBy": "Uploaded By",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At",
+      "courtCase": "Court Case",
+      "user": "User"
+    }
+  }
+}

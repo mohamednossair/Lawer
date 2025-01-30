@@ -1,0 +1,30 @@
+{
+  "lawyerApp": {
+    "caseSession": {
+      "home": {
+        "title": "Case Sessions",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء Case Session جديد",
+        "createOrEditLabel": "إنشاء أو تعديل Case Session",
+        "notFound": "لم يتم العثور على Case Sessions"
+      },
+      "created": "Case Session جديد تم إنشاؤه بالمعرف {{ param }}",
+      "updated": "Case Session تم تحديثه بالمعرف {{ param }}",
+      "deleted": "Case Session تم حذفه بالمعرف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف Case Session {{ id }}؟"
+      },
+      "detail": {
+        "title": "Case Session"
+      },
+      "id": "ID",
+      "sessionDate": "Session Date",
+      "sessionTime": "Session Time",
+      "description": "Description",
+      "notes": "Notes",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At",
+      "courtCase": "Court Case"
+    }
+  }
+}

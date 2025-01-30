@@ -1,0 +1,18 @@
+{
+  "annotations": {
+    "changelogDate": "20250130212040"
+  },
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "caseStatusName",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "unique"]
+    }
+  ],
+  "name": "CaseStatus",
+  "relationships": [],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

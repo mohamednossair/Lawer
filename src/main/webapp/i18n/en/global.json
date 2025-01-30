@@ -7,7 +7,15 @@
       "jhipster-needle-menu-add-element": "JHipster will add additional menu entries here (do not translate!)",
       "entities": {
         "main": "Entities",
-        "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
+        "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)",
+        "caseDocument": "Case Document",
+        "caseSession": "Case Session",
+        "caseStatus": "Case Status",
+        "client": "Client",
+        "court": "Court",
+        "courtCase": "Court Case",
+        "courtCaseType": "Court Case Type",
+        "lawyer": "Lawyer"
       },
       "account": {
         "main": "Account",

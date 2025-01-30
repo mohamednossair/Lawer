@@ -1,0 +1,24 @@
+{
+  "lawyerApp": {
+    "court": {
+      "home": {
+        "title": "Courts",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء Court جديد",
+        "createOrEditLabel": "إنشاء أو تعديل Court",
+        "notFound": "لم يتم العثور على Courts"
+      },
+      "created": "Court جديد تم إنشاؤه بالمعرف {{ param }}",
+      "updated": "Court تم تحديثه بالمعرف {{ param }}",
+      "deleted": "Court تم حذفه بالمعرف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف Court {{ id }}؟"
+      },
+      "detail": {
+        "title": "Court"
+      },
+      "id": "ID",
+      "courtName": "Court Name"
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "lawyerApp": {
+    "caseSession": {
+      "home": {
+        "title": "Case Sessions",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Case Session",
+        "createOrEditLabel": "Create or edit a Case Session",
+        "notFound": "No Case Sessions found"
+      },
+      "created": "A new Case Session is created with identifier {{ param }}",
+      "updated": "A Case Session is updated with identifier {{ param }}",
+      "deleted": "A Case Session is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Case Session {{ id }}?"
+      },
+      "detail": {
+        "title": "Case Session"
+      },
+      "id": "ID",
+      "sessionDate": "Session Date",
+      "sessionTime": "Session Time",
+      "description": "Description",
+      "notes": "Notes",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At",
+      "courtCase": "Court Case"
+    }
+  }
+}

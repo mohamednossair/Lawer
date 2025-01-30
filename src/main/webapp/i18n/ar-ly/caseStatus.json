@@ -1,0 +1,24 @@
+{
+  "lawyerApp": {
+    "caseStatus": {
+      "home": {
+        "title": "Case Statuses",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء Case Status جديد",
+        "createOrEditLabel": "إنشاء أو تعديل Case Status",
+        "notFound": "لم يتم العثور على Case Statuses"
+      },
+      "created": "Case Status جديد تم إنشاؤه بالمعرف {{ param }}",
+      "updated": "Case Status تم تحديثه بالمعرف {{ param }}",
+      "deleted": "Case Status تم حذفه بالمعرف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف Case Status {{ id }}؟"
+      },
+      "detail": {
+        "title": "Case Status"
+      },
+      "id": "ID",
+      "caseStatusName": "Case Status Name"
+    }
+  }
+}

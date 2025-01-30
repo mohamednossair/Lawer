@@ -1,0 +1,31 @@
+{
+  "lawyerApp": {
+    "lawyer": {
+      "home": {
+        "title": "Lawyers",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Lawyer",
+        "createOrEditLabel": "Create or edit a Lawyer",
+        "notFound": "No Lawyers found"
+      },
+      "created": "A new Lawyer is created with identifier {{ param }}",
+      "updated": "A Lawyer is updated with identifier {{ param }}",
+      "deleted": "A Lawyer is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Lawyer {{ id }}?"
+      },
+      "detail": {
+        "title": "Lawyer"
+      },
+      "id": "ID",
+      "lawyerName": "Lawyer Name",
+      "address": "Address",
+      "contactNumber": "Contact Number",
+      "specialization": "Specialization",
+      "email": "Email",
+      "registrationNumber": "Registration Number",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At"
+    }
+  }
+}

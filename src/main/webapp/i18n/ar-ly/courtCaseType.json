@@ -1,0 +1,24 @@
+{
+  "lawyerApp": {
+    "courtCaseType": {
+      "home": {
+        "title": "Court Case Types",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء Court Case Type جديد",
+        "createOrEditLabel": "إنشاء أو تعديل Court Case Type",
+        "notFound": "لم يتم العثور على Court Case Types"
+      },
+      "created": "Court Case Type جديد تم إنشاؤه بالمعرف {{ param }}",
+      "updated": "Court Case Type تم تحديثه بالمعرف {{ param }}",
+      "deleted": "Court Case Type تم حذفه بالمعرف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف Court Case Type {{ id }}؟"
+      },
+      "detail": {
+        "title": "Court Case Type"
+      },
+      "id": "ID",
+      "caseTypeName": "Case Type Name"
+    }
+  }
+}

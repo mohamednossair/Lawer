@@ -1,85 +1,80 @@
+
+DEFAULT_MAX_LENGTH = 250
+
 entity Court {
-  court_name String required
+  courtName String required  unique
 }
 
 entity Lawyer {
-  lawyer_name String required
-  address String
-  contact_number String
+  lawyerName String required unique
+  address String maxlength(2000)
+  contactNumber String maxlength(200)
   specialization String
   email String
-  registration_number String
-  created_at ZonedDateTime
-  updated_at ZonedDateTime
+  registrationNumber String maxlength(100)
+  createdAt ZonedDateTime
+  updatedAt ZonedDateTime
 }
 
 entity Client {
-  client_name String required
-  client_description String
-  contact_number String required
+  clientName String required unique
+  clientDescription String maxlength(4000)
+  contactNumber String required
   address String
-  national_id String
+  nationalId String maxlength(32)
   email String
-  created_at ZonedDateTime
-  updated_at ZonedDateTime
+  createdAt ZonedDateTime
+  updatedAt ZonedDateTime
 }
 
 entity CourtCaseType {
-  case_type_name String required
+  caseTypeName String required unique
 }
 
 entity CaseStatus {
-  case_status_name String required
+  caseStatusName String required unique
 }
 entity CourtCase {
-  client_id Long required
-  court_id Long
-  court_case_type_id Long
-  case_status_id Long
-  opponent_lawyer_id Long
   number String required
-  year String required
-  court_circuit String
-  registration_date LocalDate required
-  attorney_number String
-  attorney_year Integer
-  attorney_authentication String
-  opponent_name String
-  opponent_description String
-  opponent_address String
-  subject String required
-  notes String
-  created_at ZonedDateTime
-  updated_at ZonedDateTime
+  caseYear String required  maxlength(10)
+  courtCircuit String
+  registrationDate LocalDate required
+  attorneyNumber String
+  attorneyYear Integer
+  attorneyAuthentication String
+  opponentName String
+  opponentDescription String
+  opponentAddress String
+  subject String required maxlength(4000)
+  notes String maxlength(4000)
+  createdAt ZonedDateTime
+  updatedAt ZonedDateTime
 }
 
 entity CaseSession {
-  session_date LocalDate required
-  session_time ZonedDateTime
-  description String
-  notes String
-  created_at ZonedDateTime
-  updated_at ZonedDateTime
+  sessionDate LocalDate required
+  sessionTime ZonedDateTime
+  description String maxlength(4000)
+  notes String maxlength(4000)
+  createdAt ZonedDateTime
+  updatedAt ZonedDateTime
 }
 
 entity CaseDocument {
-  document_name String
-  document_type String
-  file_path String
-  uploaded_by Integer
-  created_at ZonedDateTime
-  updated_at ZonedDateTime
+  documentName String  required
+  documentType String required
+  filePath String maxlength(4000)
+  uploadedBy Integer
+  createdAt ZonedDateTime
+  updatedAt ZonedDateTime
 }
 
 relationship ManyToOne {
-  CourtCase{court} to Court
-  CourtCase{client} to Client
-  CourtCase{courtCaseType} to CourtCaseType
-  CourtCase{caseStatus} to CaseStatus
-}
-
-relationship OneToMany {
-  Lawyer{courtCases} to CourtCase
+  CourtCase{court required}  to Court
+  CourtCase{client required} to Client
+  CourtCase{courtCaseType required} to CourtCaseType
+  CourtCase{caseStatus required} to CaseStatus
+  CourtCase{opponentLawyerId} to Lawyer
 }
 
 relationship ManyToOne {
@@ -88,7 +83,7 @@ relationship ManyToOne {
 
 relationship ManyToOne {
   CaseDocument{courtCase} to CourtCase
-  CaseDocument{lawyer} to Lawyer
+  CaseDocument{User} to User with builtInEntity
 }
 
 dto Court, Lawyer, Client, CourtCaseType, CaseStatus, CourtCase, CaseSession, CaseDocument with mapstruct
@@ -96,7 +91,3 @@ dto Court, Lawyer, Client, CourtCaseType, CaseStatus, CourtCase, CaseSession, Ca
 service all with serviceClass
 
 paginate CourtCase, CaseSession, CaseDocument with pagination
-
-microservice Court, Lawyer, Client, CourtCaseType, CaseStatus, CourtCase, CaseSession, CaseDocument with cms
-
-

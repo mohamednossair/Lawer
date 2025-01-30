@@ -1,0 +1,18 @@
+{
+  "annotations": {
+    "changelogDate": "20250130212042"
+  },
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "courtName",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "unique"]
+    }
+  ],
+  "name": "Court",
+  "relationships": [],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

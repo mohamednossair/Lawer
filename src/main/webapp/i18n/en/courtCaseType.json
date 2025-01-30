@@ -1,0 +1,24 @@
+{
+  "lawyerApp": {
+    "courtCaseType": {
+      "home": {
+        "title": "Court Case Types",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Court Case Type",
+        "createOrEditLabel": "Create or edit a Court Case Type",
+        "notFound": "No Court Case Types found"
+      },
+      "created": "A new Court Case Type is created with identifier {{ param }}",
+      "updated": "A Court Case Type is updated with identifier {{ param }}",
+      "deleted": "A Court Case Type is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Court Case Type {{ id }}?"
+      },
+      "detail": {
+        "title": "Court Case Type"
+      },
+      "id": "ID",
+      "caseTypeName": "Case Type Name"
+    }
+  }
+}

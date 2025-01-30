@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    <!--
+        Added the constraints for entity CourtCase.
+    -->
+    <changeSet id="20250130212043-2" author="jhipster">
+
+        <addForeignKeyConstraint baseColumnNames="court_id"
+                                 baseTableName="court_case"
+                                 constraintName="fk_court_case__court_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="court"
+                                 />
+
+        <addForeignKeyConstraint baseColumnNames="client_id"
+                                 baseTableName="court_case"
+                                 constraintName="fk_court_case__client_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="client"
+                                 />
+
+        <addForeignKeyConstraint baseColumnNames="court_case_type_id"
+                                 baseTableName="court_case"
+                                 constraintName="fk_court_case__court_case_type_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="court_case_type"
+                                 />
+
+        <addForeignKeyConstraint baseColumnNames="case_status_id"
+                                 baseTableName="court_case"
+                                 constraintName="fk_court_case__case_status_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="case_status"
+                                 />
+
+        <addForeignKeyConstraint baseColumnNames="opponent_lawyer_id_id"
+                                 baseTableName="court_case"
+                                 constraintName="fk_court_case__opponent_lawyer_id_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="lawyer"
+                                 />
+    </changeSet>
+</databaseChangeLog>

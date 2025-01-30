@@ -1,0 +1,31 @@
+{
+  "lawyerApp": {
+    "lawyer": {
+      "home": {
+        "title": "Lawyers",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء Lawyer جديد",
+        "createOrEditLabel": "إنشاء أو تعديل Lawyer",
+        "notFound": "لم يتم العثور على Lawyers"
+      },
+      "created": "Lawyer جديد تم إنشاؤه بالمعرف {{ param }}",
+      "updated": "Lawyer تم تحديثه بالمعرف {{ param }}",
+      "deleted": "Lawyer تم حذفه بالمعرف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف Lawyer {{ id }}؟"
+      },
+      "detail": {
+        "title": "Lawyer"
+      },
+      "id": "ID",
+      "lawyerName": "Lawyer Name",
+      "address": "Address",
+      "contactNumber": "Contact Number",
+      "specialization": "Specialization",
+      "email": "Email",
+      "registrationNumber": "Registration Number",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At"
+    }
+  }
+}

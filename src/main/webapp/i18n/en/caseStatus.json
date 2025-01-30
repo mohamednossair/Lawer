@@ -1,0 +1,24 @@
+{
+  "lawyerApp": {
+    "caseStatus": {
+      "home": {
+        "title": "Case Statuses",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Case Status",
+        "createOrEditLabel": "Create or edit a Case Status",
+        "notFound": "No Case Statuses found"
+      },
+      "created": "A new Case Status is created with identifier {{ param }}",
+      "updated": "A Case Status is updated with identifier {{ param }}",
+      "deleted": "A Case Status is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Case Status {{ id }}?"
+      },
+      "detail": {
+        "title": "Case Status"
+      },
+      "id": "ID",
+      "caseStatusName": "Case Status Name"
+    }
+  }
+}
