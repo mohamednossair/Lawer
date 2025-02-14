@@ -1,5 +1,6 @@
 package com.lawyer.service.dto;
 
+import jakarta.persistence.Lob;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
@@ -17,12 +18,13 @@ public class CaseDocumentDTO implements Serializable {
     private String documentName;
 
     @NotNull
+    @Size(max = 4000)
     private String documentType;
 
-    @Size(max = 4000)
-    private String filePath;
+    @Lob
+    private byte[] documentFile;
 
-    private Integer uploadedBy;
+    private String documentFileContentType;
 
     private ZonedDateTime createdAt;
 
@@ -56,20 +58,20 @@ public class CaseDocumentDTO implements Serializable {
         this.documentType = documentType;
     }
 
-    public String getFilePath() {
-        return filePath;
+    public byte[] getDocumentFile() {
+        return documentFile;
     }
 
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
+    public void setDocumentFile(byte[] documentFile) {
+        this.documentFile = documentFile;
     }
 
-    public Integer getUploadedBy() {
-        return uploadedBy;
+    public String getDocumentFileContentType() {
+        return documentFileContentType;
     }
 
-    public void setUploadedBy(Integer uploadedBy) {
-        this.uploadedBy = uploadedBy;
+    public void setDocumentFileContentType(String documentFileContentType) {
+        this.documentFileContentType = documentFileContentType;
     }
 
     public ZonedDateTime getCreatedAt() {
@@ -132,8 +134,7 @@ public class CaseDocumentDTO implements Serializable {
             "id=" + getId() +
             ", documentName='" + getDocumentName() + "'" +
             ", documentType='" + getDocumentType() + "'" +
-            ", filePath='" + getFilePath() + "'" +
-            ", uploadedBy=" + getUploadedBy() +
+            ", documentFile='" + getDocumentFile() + "'" +
             ", createdAt='" + getCreatedAt() + "'" +
             ", updatedAt='" + getUpdatedAt() + "'" +
             ", courtCase=" + getCourtCase() +

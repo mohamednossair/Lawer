@@ -23,7 +23,7 @@ export const ClientUpdate = () => {
   const updateSuccess = useAppSelector(state => state.client.updateSuccess);
 
   const handleClose = () => {
-    navigate('/client');
+    navigate(`/client${location.search}`);
   };
 
   useEffect(() => {

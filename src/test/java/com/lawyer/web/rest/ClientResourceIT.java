@@ -59,9 +59,11 @@ class ClientResourceIT {
 
     private static final ZonedDateTime DEFAULT_CREATED_AT = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
     private static final ZonedDateTime UPDATED_CREATED_AT = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
+    private static final ZonedDateTime SMALLER_CREATED_AT = ZonedDateTime.ofInstant(Instant.ofEpochMilli(-1L), ZoneOffset.UTC);
 
     private static final ZonedDateTime DEFAULT_UPDATED_AT = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
     private static final ZonedDateTime UPDATED_UPDATED_AT = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
+    private static final ZonedDateTime SMALLER_UPDATED_AT = ZonedDateTime.ofInstant(Instant.ofEpochMilli(-1L), ZoneOffset.UTC);
 
     private static final String ENTITY_API_URL = "/api/clients";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
@@ -255,6 +257,529 @@ class ClientResourceIT {
             .andExpect(jsonPath("$.email").value(DEFAULT_EMAIL))
             .andExpect(jsonPath("$.createdAt").value(sameInstant(DEFAULT_CREATED_AT)))
             .andExpect(jsonPath("$.updatedAt").value(sameInstant(DEFAULT_UPDATED_AT)));
+    }
+
+    @Test
+    @Transactional
+    void getClientsByIdFiltering() throws Exception {
+        // Initialize the database
+        insertedClient = clientRepository.saveAndFlush(client);
+
+        Long id = client.getId();
+
+        defaultClientFiltering("id.equals=" + id, "id.notEquals=" + id);
+
+        defaultClientFiltering("id.greaterThanOrEqual=" + id, "id.greaterThan=" + id);
+
+        defaultClientFiltering("id.lessThanOrEqual=" + id, "id.lessThan=" + id);
+    }
+
+    @Test
+    @Transactional
+    void getAllClientsByClientNameIsEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedClient = clientRepository.saveAndFlush(client);
+
+        // Get all the clientList where clientName equals to
+        defaultClientFiltering("clientName.equals=" + DEFAULT_CLIENT_NAME, "clientName.equals=" + UPDATED_CLIENT_NAME);
+    }
+
+    @Test
+    @Transactional
+    void getAllClientsByClientNameIsInShouldWork() throws Exception {
+        // Initialize the database
+        insertedClient = clientRepository.saveAndFlush(client);
+
+        // Get all the clientList where clientName in
+        defaultClientFiltering("clientName.in=" + DEFAULT_CLIENT_NAME + "," + UPDATED_CLIENT_NAME, "clientName.in=" + UPDATED_CLIENT_NAME);
+    }
+
+    @Test
+    @Transactional
+    void getAllClientsByClientNameIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        insertedClient = clientRepository.saveAndFlush(client);
+
+        // Get all the clientList where clientName is not null
+        defaultClientFiltering("clientName.specified=true", "clientName.specified=false");
+    }
+
+    @Test
+    @Transactional
+    void getAllClientsByClientNameContainsSomething() throws Exception {
+        // Initialize the database
+        insertedClient = clientRepository.saveAndFlush(client);
+
+        // Get all the clientList where clientName contains
+        defaultClientFiltering("clientName.contains=" + DEFAULT_CLIENT_NAME, "clientName.contains=" + UPDATED_CLIENT_NAME);
+    }
+
+    @Test
+    @Transactional
+    void getAllClientsByClientNameNotContainsSomething() throws Exception {
+        // Initialize the database
+        insertedClient = clientRepository.saveAndFlush(client);
+
+        // Get all the clientList where clientName does not contain
+        defaultClientFiltering("clientName.doesNotContain=" + UPDATED_CLIENT_NAME, "clientName.doesNotContain=" + DEFAULT_CLIENT_NAME);
+    }
+
+    @Test
+    @Transactional
+    void getAllClientsByClientDescriptionIsEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedClient = clientRepository.saveAndFlush(client);
+
+        // Get all the clientList where clientDescription equals to
+        defaultClientFiltering(
+            "clientDescription.equals=" + DEFAULT_CLIENT_DESCRIPTION,
+            "clientDescription.equals=" + UPDATED_CLIENT_DESCRIPTION
+        );
+    }
+
+    @Test
+    @Transactional
+    void getAllClientsByClientDescriptionIsInShouldWork() throws Exception {
+        // Initialize the database
+        insertedClient = clientRepository.saveAndFlush(client);
+
+        // Get all the clientList where clientDescription in
+        defaultClientFiltering(
+            "clientDescription.in=" + DEFAULT_CLIENT_DESCRIPTION + "," + UPDATED_CLIENT_DESCRIPTION,
+            "clientDescription.in=" + UPDATED_CLIENT_DESCRIPTION
+        );
+    }
+
+    @Test
+    @Transactional
+    void getAllClientsByClientDescriptionIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        insertedClient = clientRepository.saveAndFlush(client);
+
+        // Get all the clientList where clientDescription is not null
+        defaultClientFiltering("clientDescription.specified=true", "clientDescription.specified=false");
+    }
+
+    @Test
+    @Transactional
+    void getAllClientsByClientDescriptionContainsSomething() throws Exception {
+        // Initialize the database
+        insertedClient = clientRepository.saveAndFlush(client);
+
+        // Get all the clientList where clientDescription contains
+        defaultClientFiltering(
+            "clientDescription.contains=" + DEFAULT_CLIENT_DESCRIPTION,
+            "clientDescription.contains=" + UPDATED_CLIENT_DESCRIPTION
+        );
+    }
+
+    @Test
+    @Transactional
+    void getAllClientsByClientDescriptionNotContainsSomething() throws Exception {
+        // Initialize the database
+        insertedClient = clientRepository.saveAndFlush(client);
+
+        // Get all the clientList where clientDescription does not contain
+        defaultClientFiltering(
+            "clientDescription.doesNotContain=" + UPDATED_CLIENT_DESCRIPTION,
+            "clientDescription.doesNotContain=" + DEFAULT_CLIENT_DESCRIPTION
+        );
+    }
+
+    @Test
+    @Transactional
+    void getAllClientsByContactNumberIsEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedClient = clientRepository.saveAndFlush(client);
+
+        // Get all the clientList where contactNumber equals to
+        defaultClientFiltering("contactNumber.equals=" + DEFAULT_CONTACT_NUMBER, "contactNumber.equals=" + UPDATED_CONTACT_NUMBER);
+    }
+
+    @Test
+    @Transactional
+    void getAllClientsByContactNumberIsInShouldWork() throws Exception {
+        // Initialize the database
+        insertedClient = clientRepository.saveAndFlush(client);
+
+        // Get all the clientList where contactNumber in
+        defaultClientFiltering(
+            "contactNumber.in=" + DEFAULT_CONTACT_NUMBER + "," + UPDATED_CONTACT_NUMBER,
+            "contactNumber.in=" + UPDATED_CONTACT_NUMBER
+        );
+    }
+
+    @Test
+    @Transactional
+    void getAllClientsByContactNumberIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        insertedClient = clientRepository.saveAndFlush(client);
+
+        // Get all the clientList where contactNumber is not null
+        defaultClientFiltering("contactNumber.specified=true", "contactNumber.specified=false");
+    }
+
+    @Test
+    @Transactional
+    void getAllClientsByContactNumberContainsSomething() throws Exception {
+        // Initialize the database
+        insertedClient = clientRepository.saveAndFlush(client);
+
+        // Get all the clientList where contactNumber contains
+        defaultClientFiltering("contactNumber.contains=" + DEFAULT_CONTACT_NUMBER, "contactNumber.contains=" + UPDATED_CONTACT_NUMBER);
+    }
+
+    @Test
+    @Transactional
+    void getAllClientsByContactNumberNotContainsSomething() throws Exception {
+        // Initialize the database
+        insertedClient = clientRepository.saveAndFlush(client);
+
+        // Get all the clientList where contactNumber does not contain
+        defaultClientFiltering(
+            "contactNumber.doesNotContain=" + UPDATED_CONTACT_NUMBER,
+            "contactNumber.doesNotContain=" + DEFAULT_CONTACT_NUMBER
+        );
+    }
+
+    @Test
+    @Transactional
+    void getAllClientsByAddressIsEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedClient = clientRepository.saveAndFlush(client);
+
+        // Get all the clientList where address equals to
+        defaultClientFiltering("address.equals=" + DEFAULT_ADDRESS, "address.equals=" + UPDATED_ADDRESS);
+    }
+
+    @Test
+    @Transactional
+    void getAllClientsByAddressIsInShouldWork() throws Exception {
+        // Initialize the database
+        insertedClient = clientRepository.saveAndFlush(client);
+
+        // Get all the clientList where address in
+        defaultClientFiltering("address.in=" + DEFAULT_ADDRESS + "," + UPDATED_ADDRESS, "address.in=" + UPDATED_ADDRESS);
+    }
+
+    @Test
+    @Transactional
+    void getAllClientsByAddressIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        insertedClient = clientRepository.saveAndFlush(client);
+
+        // Get all the clientList where address is not null
+        defaultClientFiltering("address.specified=true", "address.specified=false");
+    }
+
+    @Test
+    @Transactional
+    void getAllClientsByAddressContainsSomething() throws Exception {
+        // Initialize the database
+        insertedClient = clientRepository.saveAndFlush(client);
+
+        // Get all the clientList where address contains
+        defaultClientFiltering("address.contains=" + DEFAULT_ADDRESS, "address.contains=" + UPDATED_ADDRESS);
+    }
+
+    @Test
+    @Transactional
+    void getAllClientsByAddressNotContainsSomething() throws Exception {
+        // Initialize the database
+        insertedClient = clientRepository.saveAndFlush(client);
+
+        // Get all the clientList where address does not contain
+        defaultClientFiltering("address.doesNotContain=" + UPDATED_ADDRESS, "address.doesNotContain=" + DEFAULT_ADDRESS);
+    }
+
+    @Test
+    @Transactional
+    void getAllClientsByNationalIdIsEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedClient = clientRepository.saveAndFlush(client);
+
+        // Get all the clientList where nationalId equals to
+        defaultClientFiltering("nationalId.equals=" + DEFAULT_NATIONAL_ID, "nationalId.equals=" + UPDATED_NATIONAL_ID);
+    }
+
+    @Test
+    @Transactional
+    void getAllClientsByNationalIdIsInShouldWork() throws Exception {
+        // Initialize the database
+        insertedClient = clientRepository.saveAndFlush(client);
+
+        // Get all the clientList where nationalId in
+        defaultClientFiltering("nationalId.in=" + DEFAULT_NATIONAL_ID + "," + UPDATED_NATIONAL_ID, "nationalId.in=" + UPDATED_NATIONAL_ID);
+    }
+
+    @Test
+    @Transactional
+    void getAllClientsByNationalIdIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        insertedClient = clientRepository.saveAndFlush(client);
+
+        // Get all the clientList where nationalId is not null
+        defaultClientFiltering("nationalId.specified=true", "nationalId.specified=false");
+    }
+
+    @Test
+    @Transactional
+    void getAllClientsByNationalIdContainsSomething() throws Exception {
+        // Initialize the database
+        insertedClient = clientRepository.saveAndFlush(client);
+
+        // Get all the clientList where nationalId contains
+        defaultClientFiltering("nationalId.contains=" + DEFAULT_NATIONAL_ID, "nationalId.contains=" + UPDATED_NATIONAL_ID);
+    }
+
+    @Test
+    @Transactional
+    void getAllClientsByNationalIdNotContainsSomething() throws Exception {
+        // Initialize the database
+        insertedClient = clientRepository.saveAndFlush(client);
+
+        // Get all the clientList where nationalId does not contain
+        defaultClientFiltering("nationalId.doesNotContain=" + UPDATED_NATIONAL_ID, "nationalId.doesNotContain=" + DEFAULT_NATIONAL_ID);
+    }
+
+    @Test
+    @Transactional
+    void getAllClientsByEmailIsEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedClient = clientRepository.saveAndFlush(client);
+
+        // Get all the clientList where email equals to
+        defaultClientFiltering("email.equals=" + DEFAULT_EMAIL, "email.equals=" + UPDATED_EMAIL);
+    }
+
+    @Test
+    @Transactional
+    void getAllClientsByEmailIsInShouldWork() throws Exception {
+        // Initialize the database
+        insertedClient = clientRepository.saveAndFlush(client);
+
+        // Get all the clientList where email in
+        defaultClientFiltering("email.in=" + DEFAULT_EMAIL + "," + UPDATED_EMAIL, "email.in=" + UPDATED_EMAIL);
+    }
+
+    @Test
+    @Transactional
+    void getAllClientsByEmailIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        insertedClient = clientRepository.saveAndFlush(client);
+
+        // Get all the clientList where email is not null
+        defaultClientFiltering("email.specified=true", "email.specified=false");
+    }
+
+    @Test
+    @Transactional
+    void getAllClientsByEmailContainsSomething() throws Exception {
+        // Initialize the database
+        insertedClient = clientRepository.saveAndFlush(client);
+
+        // Get all the clientList where email contains
+        defaultClientFiltering("email.contains=" + DEFAULT_EMAIL, "email.contains=" + UPDATED_EMAIL);
+    }
+
+    @Test
+    @Transactional
+    void getAllClientsByEmailNotContainsSomething() throws Exception {
+        // Initialize the database
+        insertedClient = clientRepository.saveAndFlush(client);
+
+        // Get all the clientList where email does not contain
+        defaultClientFiltering("email.doesNotContain=" + UPDATED_EMAIL, "email.doesNotContain=" + DEFAULT_EMAIL);
+    }
+
+    @Test
+    @Transactional
+    void getAllClientsByCreatedAtIsEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedClient = clientRepository.saveAndFlush(client);
+
+        // Get all the clientList where createdAt equals to
+        defaultClientFiltering("createdAt.equals=" + DEFAULT_CREATED_AT, "createdAt.equals=" + UPDATED_CREATED_AT);
+    }
+
+    @Test
+    @Transactional
+    void getAllClientsByCreatedAtIsInShouldWork() throws Exception {
+        // Initialize the database
+        insertedClient = clientRepository.saveAndFlush(client);
+
+        // Get all the clientList where createdAt in
+        defaultClientFiltering("createdAt.in=" + DEFAULT_CREATED_AT + "," + UPDATED_CREATED_AT, "createdAt.in=" + UPDATED_CREATED_AT);
+    }
+
+    @Test
+    @Transactional
+    void getAllClientsByCreatedAtIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        insertedClient = clientRepository.saveAndFlush(client);
+
+        // Get all the clientList where createdAt is not null
+        defaultClientFiltering("createdAt.specified=true", "createdAt.specified=false");
+    }
+
+    @Test
+    @Transactional
+    void getAllClientsByCreatedAtIsGreaterThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedClient = clientRepository.saveAndFlush(client);
+
+        // Get all the clientList where createdAt is greater than or equal to
+        defaultClientFiltering("createdAt.greaterThanOrEqual=" + DEFAULT_CREATED_AT, "createdAt.greaterThanOrEqual=" + UPDATED_CREATED_AT);
+    }
+
+    @Test
+    @Transactional
+    void getAllClientsByCreatedAtIsLessThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedClient = clientRepository.saveAndFlush(client);
+
+        // Get all the clientList where createdAt is less than or equal to
+        defaultClientFiltering("createdAt.lessThanOrEqual=" + DEFAULT_CREATED_AT, "createdAt.lessThanOrEqual=" + SMALLER_CREATED_AT);
+    }
+
+    @Test
+    @Transactional
+    void getAllClientsByCreatedAtIsLessThanSomething() throws Exception {
+        // Initialize the database
+        insertedClient = clientRepository.saveAndFlush(client);
+
+        // Get all the clientList where createdAt is less than
+        defaultClientFiltering("createdAt.lessThan=" + UPDATED_CREATED_AT, "createdAt.lessThan=" + DEFAULT_CREATED_AT);
+    }
+
+    @Test
+    @Transactional
+    void getAllClientsByCreatedAtIsGreaterThanSomething() throws Exception {
+        // Initialize the database
+        insertedClient = clientRepository.saveAndFlush(client);
+
+        // Get all the clientList where createdAt is greater than
+        defaultClientFiltering("createdAt.greaterThan=" + SMALLER_CREATED_AT, "createdAt.greaterThan=" + DEFAULT_CREATED_AT);
+    }
+
+    @Test
+    @Transactional
+    void getAllClientsByUpdatedAtIsEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedClient = clientRepository.saveAndFlush(client);
+
+        // Get all the clientList where updatedAt equals to
+        defaultClientFiltering("updatedAt.equals=" + DEFAULT_UPDATED_AT, "updatedAt.equals=" + UPDATED_UPDATED_AT);
+    }
+
+    @Test
+    @Transactional
+    void getAllClientsByUpdatedAtIsInShouldWork() throws Exception {
+        // Initialize the database
+        insertedClient = clientRepository.saveAndFlush(client);
+
+        // Get all the clientList where updatedAt in
+        defaultClientFiltering("updatedAt.in=" + DEFAULT_UPDATED_AT + "," + UPDATED_UPDATED_AT, "updatedAt.in=" + UPDATED_UPDATED_AT);
+    }
+
+    @Test
+    @Transactional
+    void getAllClientsByUpdatedAtIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        insertedClient = clientRepository.saveAndFlush(client);
+
+        // Get all the clientList where updatedAt is not null
+        defaultClientFiltering("updatedAt.specified=true", "updatedAt.specified=false");
+    }
+
+    @Test
+    @Transactional
+    void getAllClientsByUpdatedAtIsGreaterThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedClient = clientRepository.saveAndFlush(client);
+
+        // Get all the clientList where updatedAt is greater than or equal to
+        defaultClientFiltering("updatedAt.greaterThanOrEqual=" + DEFAULT_UPDATED_AT, "updatedAt.greaterThanOrEqual=" + UPDATED_UPDATED_AT);
+    }
+
+    @Test
+    @Transactional
+    void getAllClientsByUpdatedAtIsLessThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedClient = clientRepository.saveAndFlush(client);
+
+        // Get all the clientList where updatedAt is less than or equal to
+        defaultClientFiltering("updatedAt.lessThanOrEqual=" + DEFAULT_UPDATED_AT, "updatedAt.lessThanOrEqual=" + SMALLER_UPDATED_AT);
+    }
+
+    @Test
+    @Transactional
+    void getAllClientsByUpdatedAtIsLessThanSomething() throws Exception {
+        // Initialize the database
+        insertedClient = clientRepository.saveAndFlush(client);
+
+        // Get all the clientList where updatedAt is less than
+        defaultClientFiltering("updatedAt.lessThan=" + UPDATED_UPDATED_AT, "updatedAt.lessThan=" + DEFAULT_UPDATED_AT);
+    }
+
+    @Test
+    @Transactional
+    void getAllClientsByUpdatedAtIsGreaterThanSomething() throws Exception {
+        // Initialize the database
+        insertedClient = clientRepository.saveAndFlush(client);
+
+        // Get all the clientList where updatedAt is greater than
+        defaultClientFiltering("updatedAt.greaterThan=" + SMALLER_UPDATED_AT, "updatedAt.greaterThan=" + DEFAULT_UPDATED_AT);
+    }
+
+    private void defaultClientFiltering(String shouldBeFound, String shouldNotBeFound) throws Exception {
+        defaultClientShouldBeFound(shouldBeFound);
+        defaultClientShouldNotBeFound(shouldNotBeFound);
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is returned.
+     */
+    private void defaultClientShouldBeFound(String filter) throws Exception {
+        restClientMockMvc
+            .perform(get(ENTITY_API_URL + "?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(client.getId().intValue())))
+            .andExpect(jsonPath("$.[*].clientName").value(hasItem(DEFAULT_CLIENT_NAME)))
+            .andExpect(jsonPath("$.[*].clientDescription").value(hasItem(DEFAULT_CLIENT_DESCRIPTION)))
+            .andExpect(jsonPath("$.[*].contactNumber").value(hasItem(DEFAULT_CONTACT_NUMBER)))
+            .andExpect(jsonPath("$.[*].address").value(hasItem(DEFAULT_ADDRESS)))
+            .andExpect(jsonPath("$.[*].nationalId").value(hasItem(DEFAULT_NATIONAL_ID)))
+            .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL)))
+            .andExpect(jsonPath("$.[*].createdAt").value(hasItem(sameInstant(DEFAULT_CREATED_AT))))
+            .andExpect(jsonPath("$.[*].updatedAt").value(hasItem(sameInstant(DEFAULT_UPDATED_AT))));
+
+        // Check, that the count call also returns 1
+        restClientMockMvc
+            .perform(get(ENTITY_API_URL + "/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(content().string("1"));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is not returned.
+     */
+    private void defaultClientShouldNotBeFound(String filter) throws Exception {
+        restClientMockMvc
+            .perform(get(ENTITY_API_URL + "?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(jsonPath("$").isArray())
+            .andExpect(jsonPath("$").isEmpty());
+
+        // Check, that the count call also returns 0
+        restClientMockMvc
+            .perform(get(ENTITY_API_URL + "/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(content().string("0"));
     }
 
     @Test

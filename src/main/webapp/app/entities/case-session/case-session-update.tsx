@@ -170,7 +170,7 @@ export const CaseSessionUpdate = () => {
                 {courtCases
                   ? courtCases.map(otherEntity => (
                       <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.id}
+                        {otherEntity.caseNumber}
                       </option>
                     ))
                   : null}

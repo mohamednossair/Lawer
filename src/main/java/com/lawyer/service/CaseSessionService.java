@@ -77,15 +77,12 @@ public class CaseSessionService {
     }
 
     /**
-     * Get all the caseSessions.
+     * Get all the caseSessions with eager load of many-to-many relationships.
      *
-     * @param pageable the pagination information.
      * @return the list of entities.
      */
-    @Transactional(readOnly = true)
-    public Page<CaseSessionDTO> findAll(Pageable pageable) {
-        LOG.debug("Request to get all CaseSessions");
-        return caseSessionRepository.findAll(pageable).map(caseSessionMapper::toDto);
+    public Page<CaseSessionDTO> findAllWithEagerRelationships(Pageable pageable) {
+        return caseSessionRepository.findAllWithEagerRelationships(pageable).map(caseSessionMapper::toDto);
     }
 
     /**
@@ -97,7 +94,7 @@ public class CaseSessionService {
     @Transactional(readOnly = true)
     public Optional<CaseSessionDTO> findOne(Long id) {
         LOG.debug("Request to get CaseSession : {}", id);
-        return caseSessionRepository.findById(id).map(caseSessionMapper::toDto);
+        return caseSessionRepository.findOneWithEagerRelationships(id).map(caseSessionMapper::toDto);
     }
 
     /**

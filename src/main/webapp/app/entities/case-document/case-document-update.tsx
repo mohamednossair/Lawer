@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Button, Col, Row } from 'reactstrap';
-import { Translate, ValidatedField, ValidatedForm, translate } from 'react-jhipster';
+import { Translate, ValidatedBlobField, ValidatedField, ValidatedForm, translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
@@ -50,9 +50,6 @@ export const CaseDocumentUpdate = () => {
   const saveEntity = values => {
     if (values.id !== undefined && typeof values.id !== 'number') {
       values.id = Number(values.id);
-    }
-    if (values.uploadedBy !== undefined && typeof values.uploadedBy !== 'number') {
-      values.uploadedBy = Number(values.uploadedBy);
     }
     values.createdAt = convertDateTimeToServer(values.createdAt);
     values.updatedAt = convertDateTimeToServer(values.updatedAt);
@@ -128,24 +125,18 @@ export const CaseDocumentUpdate = () => {
                 type="text"
                 validate={{
                   required: { value: true, message: translate('entity.validation.required') },
-                }}
-              />
-              <ValidatedField
-                label={translate('lawyerApp.caseDocument.filePath')}
-                id="case-document-filePath"
-                name="filePath"
-                data-cy="filePath"
-                type="text"
-                validate={{
                   maxLength: { value: 4000, message: translate('entity.validation.maxlength', { max: 4000 }) },
                 }}
               />
-              <ValidatedField
-                label={translate('lawyerApp.caseDocument.uploadedBy')}
-                id="case-document-uploadedBy"
-                name="uploadedBy"
-                data-cy="uploadedBy"
-                type="text"
+              <ValidatedBlobField
+                label={translate('lawyerApp.caseDocument.documentFile')}
+                id="case-document-documentFile"
+                name="documentFile"
+                data-cy="documentFile"
+                openActionLabel={translate('entity.action.open')}
+                validate={{
+                  required: { value: true, message: translate('entity.validation.required') },
+                }}
               />
               <ValidatedField
                 label={translate('lawyerApp.caseDocument.createdAt')}
@@ -174,7 +165,7 @@ export const CaseDocumentUpdate = () => {
                 {courtCases
                   ? courtCases.map(otherEntity => (
                       <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.id}
+                        {otherEntity.caseNumber}
                       </option>
                     ))
                   : null}
@@ -190,7 +181,7 @@ export const CaseDocumentUpdate = () => {
                 {users
                   ? users.map(otherEntity => (
                       <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.id}
+                        {otherEntity.login}
                       </option>
                     ))
                   : null}

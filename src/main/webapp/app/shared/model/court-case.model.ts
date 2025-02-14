@@ -7,7 +7,7 @@ import { ILawyer } from 'app/shared/model/lawyer.model';
 
 export interface ICourtCase {
   id?: number;
-  number?: string;
+  caseNumber?: string;
   caseYear?: string;
   courtCircuit?: string | null;
   registrationDate?: dayjs.Dayjs;

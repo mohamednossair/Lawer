@@ -11,11 +11,12 @@ import org.mapstruct.*;
  */
 @Mapper(componentModel = "spring")
 public interface CaseSessionMapper extends EntityMapper<CaseSessionDTO, CaseSession> {
-    @Mapping(target = "courtCase", source = "courtCase", qualifiedByName = "courtCaseId")
+    @Mapping(target = "courtCase", source = "courtCase", qualifiedByName = "courtCaseCaseNumber")
     CaseSessionDTO toDto(CaseSession s);
 
-    @Named("courtCaseId")
+    @Named("courtCaseCaseNumber")
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")
-    CourtCaseDTO toDtoCourtCaseId(CourtCase courtCase);
+    @Mapping(target = "caseNumber", source = "caseNumber")
+    CourtCaseDTO toDtoCourtCaseCaseNumber(CourtCase courtCase);
 }

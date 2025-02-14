@@ -1,4 +1,4 @@
-id;number;case_year;court_circuit;registration_date;attorney_number;attorney_year;attorney_authentication;opponent_name;opponent_description;opponent_address;subject;notes;created_at;updated_at;court_id;client_id;court_case_type_id;case_status_id
+id;case_number;case_year;court_circuit;registration_date;attorney_number;attorney_year;attorney_authentication;opponent_name;opponent_description;opponent_address;subject;notes;created_at;updated_at;court_id;client_id;court_case_type_id;case_status_id
 1;highlight;where what;yowza hence amid;2025-01-30;nearly boastfully;15012;under;but;duh amongst apud;energetically beneath bleak;underneath progress;jaggedly gah pfft;2025-01-30T01:26:49;2025-01-30T17:28:13;1;1;1;1
 2;major;crossly;ouch kinase immediately;2025-01-30;ack;22410;duh huzzah;keenly hovercraft;never;travel;alongside;utterly anenst;2025-01-30T18:01:12;2025-01-30T15:30:11;2;2;2;2
 3;provided enrage;lazily;triangular different;2025-01-30;ew triumphantly;12850;daintily;galvanize;um;coolly;brr abnormally cow;fisherman gadzooks;2025-01-30T06:37:43;2025-01-30T04:51:11;3;3;3;3

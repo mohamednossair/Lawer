@@ -6,8 +6,8 @@ export interface ICaseDocument {
   id?: number;
   documentName?: string;
   documentType?: string;
-  filePath?: string | null;
-  uploadedBy?: number | null;
+  documentFileContentType?: string;
+  documentFile?: string;
   createdAt?: dayjs.Dayjs | null;
   updatedAt?: dayjs.Dayjs | null;
   courtCase?: ICourtCase | null;

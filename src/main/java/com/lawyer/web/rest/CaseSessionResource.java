@@ -1,7 +1,9 @@
 package com.lawyer.web.rest;
 
 import com.lawyer.repository.CaseSessionRepository;
+import com.lawyer.service.CaseSessionQueryService;
 import com.lawyer.service.CaseSessionService;
+import com.lawyer.service.criteria.CaseSessionCriteria;
 import com.lawyer.service.dto.CaseSessionDTO;
 import com.lawyer.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
@@ -42,9 +44,16 @@ public class CaseSessionResource {
 
     private final CaseSessionRepository caseSessionRepository;
 
-    public CaseSessionResource(CaseSessionService caseSessionService, CaseSessionRepository caseSessionRepository) {
+    private final CaseSessionQueryService caseSessionQueryService;
+
+    public CaseSessionResource(
+        CaseSessionService caseSessionService,
+        CaseSessionRepository caseSessionRepository,
+        CaseSessionQueryService caseSessionQueryService
+    ) {
         this.caseSessionService = caseSessionService;
         this.caseSessionRepository = caseSessionRepository;
+        this.caseSessionQueryService = caseSessionQueryService;
     }
 
     /**
@@ -139,14 +148,31 @@ public class CaseSessionResource {
      * {@code GET  /case-sessions} : get all the caseSessions.
      *
      * @param pageable the pagination information.
+     * @param criteria the criteria which the requested entities should match.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of caseSessions in body.
      */
     @GetMapping("")
-    public ResponseEntity<List<CaseSessionDTO>> getAllCaseSessions(@org.springdoc.core.annotations.ParameterObject Pageable pageable) {
-        LOG.debug("REST request to get a page of CaseSessions");
-        Page<CaseSessionDTO> page = caseSessionService.findAll(pageable);
+    public ResponseEntity<List<CaseSessionDTO>> getAllCaseSessions(
+        CaseSessionCriteria criteria,
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable
+    ) {
+        LOG.debug("REST request to get CaseSessions by criteria: {}", criteria);
+
+        Page<CaseSessionDTO> page = caseSessionQueryService.findByCriteria(criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
+     * {@code GET  /case-sessions/count} : count all the caseSessions.
+     *
+     * @param criteria the criteria which the requested entities should match.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     */
+    @GetMapping("/count")
+    public ResponseEntity<Long> countCaseSessions(CaseSessionCriteria criteria) {
+        LOG.debug("REST request to count CaseSessions by criteria: {}", criteria);
+        return ResponseEntity.ok().body(caseSessionQueryService.countByCriteria(criteria));
     }
 
     /**

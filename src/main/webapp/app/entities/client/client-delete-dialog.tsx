@@ -25,7 +25,7 @@ export const ClientDeleteDialog = () => {
   const updateSuccess = useAppSelector(state => state.client.updateSuccess);
 
   const handleClose = () => {
-    navigate('/client');
+    navigate(`/client${pageLocation.search}`);
   };
 
   useEffect(() => {

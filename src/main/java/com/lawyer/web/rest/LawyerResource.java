@@ -1,7 +1,9 @@
 package com.lawyer.web.rest;
 
 import com.lawyer.repository.LawyerRepository;
+import com.lawyer.service.LawyerQueryService;
 import com.lawyer.service.LawyerService;
+import com.lawyer.service.criteria.LawyerCriteria;
 import com.lawyer.service.dto.LawyerDTO;
 import com.lawyer.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
@@ -14,9 +16,14 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
+import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.ResponseUtil;
 
 /**
@@ -37,9 +44,12 @@ public class LawyerResource {
 
     private final LawyerRepository lawyerRepository;
 
-    public LawyerResource(LawyerService lawyerService, LawyerRepository lawyerRepository) {
+    private final LawyerQueryService lawyerQueryService;
+
+    public LawyerResource(LawyerService lawyerService, LawyerRepository lawyerRepository, LawyerQueryService lawyerQueryService) {
         this.lawyerService = lawyerService;
         this.lawyerRepository = lawyerRepository;
+        this.lawyerQueryService = lawyerQueryService;
     }
 
     /**
@@ -133,12 +143,32 @@ public class LawyerResource {
     /**
      * {@code GET  /lawyers} : get all the lawyers.
      *
+     * @param pageable the pagination information.
+     * @param criteria the criteria which the requested entities should match.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of lawyers in body.
      */
     @GetMapping("")
-    public List<LawyerDTO> getAllLawyers() {
-        LOG.debug("REST request to get all Lawyers");
-        return lawyerService.findAll();
+    public ResponseEntity<List<LawyerDTO>> getAllLawyers(
+        LawyerCriteria criteria,
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable
+    ) {
+        LOG.debug("REST request to get Lawyers by criteria: {}", criteria);
+
+        Page<LawyerDTO> page = lawyerQueryService.findByCriteria(criteria, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
+     * {@code GET  /lawyers/count} : count all the lawyers.
+     *
+     * @param criteria the criteria which the requested entities should match.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     */
+    @GetMapping("/count")
+    public ResponseEntity<Long> countLawyers(LawyerCriteria criteria) {
+        LOG.debug("REST request to count Lawyers by criteria: {}", criteria);
+        return ResponseEntity.ok().body(lawyerQueryService.countByCriteria(criteria));
     }
 
     /**

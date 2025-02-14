@@ -4,10 +4,7 @@ import com.lawyer.domain.Lawyer;
 import com.lawyer.repository.LawyerRepository;
 import com.lawyer.service.dto.LawyerDTO;
 import com.lawyer.service.mapper.LawyerMapper;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -75,17 +72,6 @@ public class LawyerService {
             })
             .map(lawyerRepository::save)
             .map(lawyerMapper::toDto);
-    }
-
-    /**
-     * Get all the lawyers.
-     *
-     * @return the list of entities.
-     */
-    @Transactional(readOnly = true)
-    public List<LawyerDTO> findAll() {
-        LOG.debug("Request to get all Lawyers");
-        return lawyerRepository.findAll().stream().map(lawyerMapper::toDto).collect(Collectors.toCollection(LinkedList::new));
     }
 
     /**

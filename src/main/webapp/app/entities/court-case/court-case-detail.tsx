@@ -33,11 +33,11 @@ export const CourtCaseDetail = () => {
           </dt>
           <dd>{courtCaseEntity.id}</dd>
           <dt>
-            <span id="number">
-              <Translate contentKey="lawyerApp.courtCase.number">Number</Translate>
+            <span id="caseNumber">
+              <Translate contentKey="lawyerApp.courtCase.caseNumber">Case Number</Translate>
             </span>
           </dt>
-          <dd>{courtCaseEntity.number}</dd>
+          <dd>{courtCaseEntity.caseNumber}</dd>
           <dt>
             <span id="caseYear">
               <Translate contentKey="lawyerApp.courtCase.caseYear">Case Year</Translate>
@@ -127,23 +127,23 @@ export const CourtCaseDetail = () => {
           <dt>
             <Translate contentKey="lawyerApp.courtCase.court">Court</Translate>
           </dt>
-          <dd>{courtCaseEntity.court ? courtCaseEntity.court.id : ''}</dd>
+          <dd>{courtCaseEntity.court ? courtCaseEntity.court.courtName : ''}</dd>
           <dt>
             <Translate contentKey="lawyerApp.courtCase.client">Client</Translate>
           </dt>
-          <dd>{courtCaseEntity.client ? courtCaseEntity.client.id : ''}</dd>
+          <dd>{courtCaseEntity.client ? courtCaseEntity.client.clientName : ''}</dd>
           <dt>
             <Translate contentKey="lawyerApp.courtCase.courtCaseType">Court Case Type</Translate>
           </dt>
-          <dd>{courtCaseEntity.courtCaseType ? courtCaseEntity.courtCaseType.id : ''}</dd>
+          <dd>{courtCaseEntity.courtCaseType ? courtCaseEntity.courtCaseType.caseTypeName : ''}</dd>
           <dt>
             <Translate contentKey="lawyerApp.courtCase.caseStatus">Case Status</Translate>
           </dt>
-          <dd>{courtCaseEntity.caseStatus ? courtCaseEntity.caseStatus.id : ''}</dd>
+          <dd>{courtCaseEntity.caseStatus ? courtCaseEntity.caseStatus.caseStatusName : ''}</dd>
           <dt>
             <Translate contentKey="lawyerApp.courtCase.opponentLawyerId">Opponent Lawyer Id</Translate>
           </dt>
-          <dd>{courtCaseEntity.opponentLawyerId ? courtCaseEntity.opponentLawyerId.id : ''}</dd>
+          <dd>{courtCaseEntity.opponentLawyerId ? courtCaseEntity.opponentLawyerId.lawyerName : ''}</dd>
         </dl>
         <Button tag={Link} to="/court-case" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" />{' '}

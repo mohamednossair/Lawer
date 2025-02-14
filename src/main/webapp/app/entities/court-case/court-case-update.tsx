@@ -126,10 +126,10 @@ export const CourtCaseUpdate = () => {
                 />
               ) : null}
               <ValidatedField
-                label={translate('lawyerApp.courtCase.number')}
-                id="court-case-number"
-                name="number"
-                data-cy="number"
+                label={translate('lawyerApp.courtCase.caseNumber')}
+                id="court-case-caseNumber"
+                name="caseNumber"
+                data-cy="caseNumber"
                 type="text"
                 validate={{
                   required: { value: true, message: translate('entity.validation.required') },
@@ -254,7 +254,7 @@ export const CourtCaseUpdate = () => {
                 {courts
                   ? courts.map(otherEntity => (
                       <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.id}
+                        {otherEntity.courtName}
                       </option>
                     ))
                   : null}
@@ -274,7 +274,7 @@ export const CourtCaseUpdate = () => {
                 {clients
                   ? clients.map(otherEntity => (
                       <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.id}
+                        {otherEntity.clientName}
                       </option>
                     ))
                   : null}
@@ -294,7 +294,7 @@ export const CourtCaseUpdate = () => {
                 {courtCaseTypes
                   ? courtCaseTypes.map(otherEntity => (
                       <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.id}
+                        {otherEntity.caseTypeName}
                       </option>
                     ))
                   : null}
@@ -314,7 +314,7 @@ export const CourtCaseUpdate = () => {
                 {caseStatuses
                   ? caseStatuses.map(otherEntity => (
                       <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.id}
+                        {otherEntity.caseStatusName}
                       </option>
                     ))
                   : null}
@@ -333,7 +333,7 @@ export const CourtCaseUpdate = () => {
                 {lawyers
                   ? lawyers.map(otherEntity => (
                       <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.id}
+                        {otherEntity.lawyerName}
                       </option>
                     ))
                   : null}

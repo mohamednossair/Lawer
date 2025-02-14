@@ -19,35 +19,40 @@ import org.mapstruct.*;
  */
 @Mapper(componentModel = "spring")
 public interface CourtCaseMapper extends EntityMapper<CourtCaseDTO, CourtCase> {
-    @Mapping(target = "court", source = "court", qualifiedByName = "courtId")
-    @Mapping(target = "client", source = "client", qualifiedByName = "clientId")
-    @Mapping(target = "courtCaseType", source = "courtCaseType", qualifiedByName = "courtCaseTypeId")
-    @Mapping(target = "caseStatus", source = "caseStatus", qualifiedByName = "caseStatusId")
-    @Mapping(target = "opponentLawyerId", source = "opponentLawyerId", qualifiedByName = "lawyerId")
+    @Mapping(target = "court", source = "court", qualifiedByName = "courtCourtName")
+    @Mapping(target = "client", source = "client", qualifiedByName = "clientClientName")
+    @Mapping(target = "courtCaseType", source = "courtCaseType", qualifiedByName = "courtCaseTypeCaseTypeName")
+    @Mapping(target = "caseStatus", source = "caseStatus", qualifiedByName = "caseStatusCaseStatusName")
+    @Mapping(target = "opponentLawyerId", source = "opponentLawyerId", qualifiedByName = "lawyerLawyerName")
     CourtCaseDTO toDto(CourtCase s);
 
-    @Named("courtId")
+    @Named("courtCourtName")
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")
-    CourtDTO toDtoCourtId(Court court);
+    @Mapping(target = "courtName", source = "courtName")
+    CourtDTO toDtoCourtCourtName(Court court);
 
-    @Named("clientId")
+    @Named("clientClientName")
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")
-    ClientDTO toDtoClientId(Client client);
+    @Mapping(target = "clientName", source = "clientName")
+    ClientDTO toDtoClientClientName(Client client);
 
-    @Named("courtCaseTypeId")
+    @Named("courtCaseTypeCaseTypeName")
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")
-    CourtCaseTypeDTO toDtoCourtCaseTypeId(CourtCaseType courtCaseType);
+    @Mapping(target = "caseTypeName", source = "caseTypeName")
+    CourtCaseTypeDTO toDtoCourtCaseTypeCaseTypeName(CourtCaseType courtCaseType);
 
-    @Named("caseStatusId")
+    @Named("caseStatusCaseStatusName")
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")
-    CaseStatusDTO toDtoCaseStatusId(CaseStatus caseStatus);
+    @Mapping(target = "caseStatusName", source = "caseStatusName")
+    CaseStatusDTO toDtoCaseStatusCaseStatusName(CaseStatus caseStatus);
 
-    @Named("lawyerId")
+    @Named("lawyerLawyerName")
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")
-    LawyerDTO toDtoLawyerId(Lawyer lawyer);
+    @Mapping(target = "lawyerName", source = "lawyerName")
+    LawyerDTO toDtoLawyerLawyerName(Lawyer lawyer);
 }

@@ -15,7 +15,7 @@ public class CourtCaseDTO implements Serializable {
     private Long id;
 
     @NotNull
-    private String number;
+    private String caseNumber;
 
     @NotNull
     @Size(max = 10)
@@ -71,12 +71,12 @@ public class CourtCaseDTO implements Serializable {
         this.id = id;
     }
 
-    public String getNumber() {
-        return number;
+    public String getCaseNumber() {
+        return caseNumber;
     }
 
-    public void setNumber(String number) {
-        this.number = number;
+    public void setCaseNumber(String caseNumber) {
+        this.caseNumber = caseNumber;
     }
 
     public String getCaseYear() {
@@ -249,7 +249,7 @@ public class CourtCaseDTO implements Serializable {
     public String toString() {
         return "CourtCaseDTO{" +
             "id=" + getId() +
-            ", number='" + getNumber() + "'" +
+            ", caseNumber='" + getCaseNumber() + "'" +
             ", caseYear='" + getCaseYear() + "'" +
             ", courtCircuit='" + getCourtCircuit() + "'" +
             ", registrationDate='" + getRegistrationDate() + "'" +

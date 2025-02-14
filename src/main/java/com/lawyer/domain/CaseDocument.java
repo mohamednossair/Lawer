@@ -29,15 +29,17 @@ public class CaseDocument implements Serializable {
     private String documentName;
 
     @NotNull
-    @Column(name = "document_type", nullable = false)
+    @Size(max = 4000)
+    @Column(name = "document_type", length = 4000, nullable = false)
     private String documentType;
 
-    @Size(max = 4000)
-    @Column(name = "file_path", length = 4000)
-    private String filePath;
+    @Lob
+    @Column(name = "document_file", nullable = false)
+    private byte[] documentFile;
 
-    @Column(name = "uploaded_by")
-    private Integer uploadedBy;
+    @NotNull
+    @Column(name = "document_file_content_type", nullable = false)
+    private String documentFileContentType;
 
     @Column(name = "created_at")
     private ZonedDateTime createdAt;
@@ -93,30 +95,30 @@ public class CaseDocument implements Serializable {
         this.documentType = documentType;
     }
 
-    public String getFilePath() {
-        return this.filePath;
+    public byte[] getDocumentFile() {
+        return this.documentFile;
     }
 
-    public CaseDocument filePath(String filePath) {
-        this.setFilePath(filePath);
+    public CaseDocument documentFile(byte[] documentFile) {
+        this.setDocumentFile(documentFile);
         return this;
     }
 
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
+    public void setDocumentFile(byte[] documentFile) {
+        this.documentFile = documentFile;
     }
 
-    public Integer getUploadedBy() {
-        return this.uploadedBy;
+    public String getDocumentFileContentType() {
+        return this.documentFileContentType;
     }
 
-    public CaseDocument uploadedBy(Integer uploadedBy) {
-        this.setUploadedBy(uploadedBy);
+    public CaseDocument documentFileContentType(String documentFileContentType) {
+        this.documentFileContentType = documentFileContentType;
         return this;
     }
 
-    public void setUploadedBy(Integer uploadedBy) {
-        this.uploadedBy = uploadedBy;
+    public void setDocumentFileContentType(String documentFileContentType) {
+        this.documentFileContentType = documentFileContentType;
     }
 
     public ZonedDateTime getCreatedAt() {
@@ -197,8 +199,8 @@ public class CaseDocument implements Serializable {
             "id=" + getId() +
             ", documentName='" + getDocumentName() + "'" +
             ", documentType='" + getDocumentType() + "'" +
-            ", filePath='" + getFilePath() + "'" +
-            ", uploadedBy=" + getUploadedBy() +
+            ", documentFile='" + getDocumentFile() + "'" +
+            ", documentFileContentType='" + getDocumentFileContentType() + "'" +
             ", createdAt='" + getCreatedAt() + "'" +
             ", updatedAt='" + getUpdatedAt() + "'" +
             "}";

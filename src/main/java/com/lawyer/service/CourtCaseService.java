@@ -77,15 +77,12 @@ public class CourtCaseService {
     }
 
     /**
-     * Get all the courtCases.
+     * Get all the courtCases with eager load of many-to-many relationships.
      *
-     * @param pageable the pagination information.
      * @return the list of entities.
      */
-    @Transactional(readOnly = true)
-    public Page<CourtCaseDTO> findAll(Pageable pageable) {
-        LOG.debug("Request to get all CourtCases");
-        return courtCaseRepository.findAll(pageable).map(courtCaseMapper::toDto);
+    public Page<CourtCaseDTO> findAllWithEagerRelationships(Pageable pageable) {
+        return courtCaseRepository.findAllWithEagerRelationships(pageable).map(courtCaseMapper::toDto);
     }
 
     /**
@@ -97,7 +94,7 @@ public class CourtCaseService {
     @Transactional(readOnly = true)
     public Optional<CourtCaseDTO> findOne(Long id) {
         LOG.debug("Request to get CourtCase : {}", id);
-        return courtCaseRepository.findById(id).map(courtCaseMapper::toDto);
+        return courtCaseRepository.findOneWithEagerRelationships(id).map(courtCaseMapper::toDto);
     }
 
     /**

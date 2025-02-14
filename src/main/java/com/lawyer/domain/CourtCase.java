@@ -25,8 +25,8 @@ public class CourtCase implements Serializable {
     private Long id;
 
     @NotNull
-    @Column(name = "number", nullable = false)
-    private String number;
+    @Column(name = "case_number", nullable = false)
+    private String caseNumber;
 
     @NotNull
     @Size(max = 10)
@@ -107,17 +107,17 @@ public class CourtCase implements Serializable {
         this.id = id;
     }
 
-    public String getNumber() {
-        return this.number;
+    public String getCaseNumber() {
+        return this.caseNumber;
     }
 
-    public CourtCase number(String number) {
-        this.setNumber(number);
+    public CourtCase caseNumber(String caseNumber) {
+        this.setCaseNumber(caseNumber);
         return this;
     }
 
-    public void setNumber(String number) {
-        this.number = number;
+    public void setCaseNumber(String caseNumber) {
+        this.caseNumber = caseNumber;
     }
 
     public String getCaseYear() {
@@ -378,7 +378,7 @@ public class CourtCase implements Serializable {
     public String toString() {
         return "CourtCase{" +
             "id=" + getId() +
-            ", number='" + getNumber() + "'" +
+            ", caseNumber='" + getCaseNumber() + "'" +
             ", caseYear='" + getCaseYear() + "'" +
             ", courtCircuit='" + getCourtCircuit() + "'" +
             ", registrationDate='" + getRegistrationDate() + "'" +

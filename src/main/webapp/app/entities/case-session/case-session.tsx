@@ -168,7 +168,11 @@ export const CaseSession = () => {
                     {caseSession.updatedAt ? <TextFormat type="date" value={caseSession.updatedAt} format={APP_DATE_FORMAT} /> : null}
                   </td>
                   <td>
-                    {caseSession.courtCase ? <Link to={`/court-case/${caseSession.courtCase.id}`}>{caseSession.courtCase.id}</Link> : ''}
+                    {caseSession.courtCase ? (
+                      <Link to={`/court-case/${caseSession.courtCase.id}`}>{caseSession.courtCase.caseNumber}</Link>
+                    ) : (
+                      ''
+                    )}
                   </td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">

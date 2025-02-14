@@ -113,9 +113,9 @@ export const CourtCase = () => {
                 <th className="hand" onClick={sort('id')}>
                   <Translate contentKey="lawyerApp.courtCase.id">ID</Translate> <FontAwesomeIcon icon={getSortIconByFieldName('id')} />
                 </th>
-                <th className="hand" onClick={sort('number')}>
-                  <Translate contentKey="lawyerApp.courtCase.number">Number</Translate>{' '}
-                  <FontAwesomeIcon icon={getSortIconByFieldName('number')} />
+                <th className="hand" onClick={sort('caseNumber')}>
+                  <Translate contentKey="lawyerApp.courtCase.caseNumber">Case Number</Translate>{' '}
+                  <FontAwesomeIcon icon={getSortIconByFieldName('caseNumber')} />
                 </th>
                 <th className="hand" onClick={sort('caseYear')}>
                   <Translate contentKey="lawyerApp.courtCase.caseYear">Case Year</Translate>{' '}
@@ -196,7 +196,7 @@ export const CourtCase = () => {
                       {courtCase.id}
                     </Button>
                   </td>
-                  <td>{courtCase.number}</td>
+                  <td>{courtCase.caseNumber}</td>
                   <td>{courtCase.caseYear}</td>
                   <td>{courtCase.courtCircuit}</td>
                   <td>
@@ -214,21 +214,25 @@ export const CourtCase = () => {
                   <td>{courtCase.notes}</td>
                   <td>{courtCase.createdAt ? <TextFormat type="date" value={courtCase.createdAt} format={APP_DATE_FORMAT} /> : null}</td>
                   <td>{courtCase.updatedAt ? <TextFormat type="date" value={courtCase.updatedAt} format={APP_DATE_FORMAT} /> : null}</td>
-                  <td>{courtCase.court ? <Link to={`/court/${courtCase.court.id}`}>{courtCase.court.id}</Link> : ''}</td>
-                  <td>{courtCase.client ? <Link to={`/client/${courtCase.client.id}`}>{courtCase.client.id}</Link> : ''}</td>
+                  <td>{courtCase.court ? <Link to={`/court/${courtCase.court.id}`}>{courtCase.court.courtName}</Link> : ''}</td>
+                  <td>{courtCase.client ? <Link to={`/client/${courtCase.client.id}`}>{courtCase.client.clientName}</Link> : ''}</td>
                   <td>
                     {courtCase.courtCaseType ? (
-                      <Link to={`/court-case-type/${courtCase.courtCaseType.id}`}>{courtCase.courtCaseType.id}</Link>
+                      <Link to={`/court-case-type/${courtCase.courtCaseType.id}`}>{courtCase.courtCaseType.caseTypeName}</Link>
                     ) : (
                       ''
                     )}
                   </td>
                   <td>
-                    {courtCase.caseStatus ? <Link to={`/case-status/${courtCase.caseStatus.id}`}>{courtCase.caseStatus.id}</Link> : ''}
+                    {courtCase.caseStatus ? (
+                      <Link to={`/case-status/${courtCase.caseStatus.id}`}>{courtCase.caseStatus.caseStatusName}</Link>
+                    ) : (
+                      ''
+                    )}
                   </td>
                   <td>
                     {courtCase.opponentLawyerId ? (
-                      <Link to={`/lawyer/${courtCase.opponentLawyerId.id}`}>{courtCase.opponentLawyerId.id}</Link>
+                      <Link to={`/lawyer/${courtCase.opponentLawyerId.id}`}>{courtCase.opponentLawyerId.lawyerName}</Link>
                     ) : (
                       ''
                     )}

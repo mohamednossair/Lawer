@@ -23,7 +23,7 @@ export const LawyerUpdate = () => {
   const updateSuccess = useAppSelector(state => state.lawyer.updateSuccess);
 
   const handleClose = () => {
-    navigate('/lawyer');
+    navigate(`/lawyer${location.search}`);
   };
 
   useEffect(() => {

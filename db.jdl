@@ -35,7 +35,7 @@ entity CaseStatus {
   caseStatusName String required unique
 }
 entity CourtCase {
-  number String required
+  caseNumber String required
   caseYear String required  maxlength(10)
   courtCircuit String
   registrationDate LocalDate required
@@ -62,32 +62,33 @@ entity CaseSession {
 
 entity CaseDocument {
   documentName String  required
-  documentType String required
-  filePath String maxlength(4000)
-  uploadedBy Integer
+  documentType String required maxlength(4000)
+  documentFile Blob required
   createdAt ZonedDateTime
   updatedAt ZonedDateTime
 }
 
 relationship ManyToOne {
-  CourtCase{court required}  to Court
-  CourtCase{client required} to Client
-  CourtCase{courtCaseType required} to CourtCaseType
-  CourtCase{caseStatus required} to CaseStatus
-  CourtCase{opponentLawyerId} to Lawyer
+  CourtCase{court(courtName) required}  to Court
+  CourtCase{client (clientName) required} to Client
+  CourtCase{courtCaseType (caseTypeName) required} to CourtCaseType
+  CourtCase{caseStatus(caseStatusName) required} to CaseStatus
+  CourtCase{opponentLawyerId(lawyerName)} to Lawyer
 }
 
 relationship ManyToOne {
-  CaseSession{courtCase} to CourtCase
+  CaseSession{courtCase(caseNumber)} to CourtCase
 }
 
 relationship ManyToOne {
-  CaseDocument{courtCase} to CourtCase
-  CaseDocument{User} to User with builtInEntity
+  CaseDocument{courtCase(caseNumber)} to CourtCase
+  CaseDocument{User(login)} to User with builtInEntity
 }
 
 dto Court, Lawyer, Client, CourtCaseType, CaseStatus, CourtCase, CaseSession, CaseDocument with mapstruct
 
 service all with serviceClass
 
-paginate CourtCase, CaseSession, CaseDocument with pagination
+paginate Client,Lawyer,CourtCase, CaseSession, CaseDocument with pagination
+
+filter Client,Lawyer,CourtCase, CaseSession, CaseDocument

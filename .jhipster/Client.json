@@ -44,7 +44,9 @@
       "fieldType": "ZonedDateTime"
     }
   ],
+  "jpaMetamodelFiltering": true,
   "name": "Client",
+  "pagination": "pagination",
   "relationships": [],
   "searchEngine": "no",
   "service": "serviceClass"

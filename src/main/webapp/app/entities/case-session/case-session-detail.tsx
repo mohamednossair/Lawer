@@ -83,7 +83,7 @@ export const CaseSessionDetail = () => {
           <dt>
             <Translate contentKey="lawyerApp.caseSession.courtCase">Court Case</Translate>
           </dt>
-          <dd>{caseSessionEntity.courtCase ? caseSessionEntity.courtCase.id : ''}</dd>
+          <dd>{caseSessionEntity.courtCase ? caseSessionEntity.courtCase.caseNumber : ''}</dd>
         </dl>
         <Button tag={Link} to="/case-session" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" />{' '}

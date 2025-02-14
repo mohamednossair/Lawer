@@ -14,7 +14,7 @@ public class CourtCaseTestSamples {
     public static CourtCase getCourtCaseSample1() {
         return new CourtCase()
             .id(1L)
-            .number("number1")
+            .caseNumber("caseNumber1")
             .caseYear("caseYear1")
             .courtCircuit("courtCircuit1")
             .attorneyNumber("attorneyNumber1")
@@ -30,7 +30,7 @@ public class CourtCaseTestSamples {
     public static CourtCase getCourtCaseSample2() {
         return new CourtCase()
             .id(2L)
-            .number("number2")
+            .caseNumber("caseNumber2")
             .caseYear("caseYear2")
             .courtCircuit("courtCircuit2")
             .attorneyNumber("attorneyNumber2")
@@ -46,7 +46,7 @@ public class CourtCaseTestSamples {
     public static CourtCase getCourtCaseRandomSampleGenerator() {
         return new CourtCase()
             .id(longCount.incrementAndGet())
-            .number(UUID.randomUUID().toString())
+            .caseNumber(UUID.randomUUID().toString())
             .caseYear(UUID.randomUUID().toString())
             .courtCircuit(UUID.randomUUID().toString())
             .attorneyNumber(UUID.randomUUID().toString())

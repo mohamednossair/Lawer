@@ -6,7 +6,7 @@
   "dto": "mapstruct",
   "fields": [
     {
-      "fieldName": "number",
+      "fieldName": "caseNumber",
       "fieldType": "String",
       "fieldValidateRules": ["required"]
     },
@@ -70,10 +70,12 @@
       "fieldType": "ZonedDateTime"
     }
   ],
+  "jpaMetamodelFiltering": true,
   "name": "CourtCase",
   "pagination": "pagination",
   "relationships": [
     {
+      "otherEntityField": "courtName",
       "otherEntityName": "court",
       "relationshipName": "court",
       "relationshipSide": "left",
@@ -81,6 +83,7 @@
       "relationshipValidateRules": "required"
     },
     {
+      "otherEntityField": "clientName",
       "otherEntityName": "client",
       "relationshipName": "client",
       "relationshipSide": "left",
@@ -88,6 +91,7 @@
       "relationshipValidateRules": "required"
     },
     {
+      "otherEntityField": "caseTypeName",
       "otherEntityName": "courtCaseType",
       "relationshipName": "courtCaseType",
       "relationshipSide": "left",
@@ -95,6 +99,7 @@
       "relationshipValidateRules": "required"
     },
     {
+      "otherEntityField": "caseStatusName",
       "otherEntityName": "caseStatus",
       "relationshipName": "caseStatus",
       "relationshipSide": "left",
@@ -102,6 +107,7 @@
       "relationshipValidateRules": "required"
     },
     {
+      "otherEntityField": "lawyerName",
       "otherEntityName": "lawyer",
       "relationshipName": "opponentLawyerId",
       "relationshipSide": "left",

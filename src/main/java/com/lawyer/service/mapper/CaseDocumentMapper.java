@@ -13,17 +13,19 @@ import org.mapstruct.*;
  */
 @Mapper(componentModel = "spring")
 public interface CaseDocumentMapper extends EntityMapper<CaseDocumentDTO, CaseDocument> {
-    @Mapping(target = "courtCase", source = "courtCase", qualifiedByName = "courtCaseId")
-    @Mapping(target = "user", source = "user", qualifiedByName = "userId")
+    @Mapping(target = "courtCase", source = "courtCase", qualifiedByName = "courtCaseCaseNumber")
+    @Mapping(target = "user", source = "user", qualifiedByName = "userLogin")
     CaseDocumentDTO toDto(CaseDocument s);
 
-    @Named("courtCaseId")
+    @Named("courtCaseCaseNumber")
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")
-    CourtCaseDTO toDtoCourtCaseId(CourtCase courtCase);
+    @Mapping(target = "caseNumber", source = "caseNumber")
+    CourtCaseDTO toDtoCourtCaseCaseNumber(CourtCase courtCase);
 
-    @Named("userId")
+    @Named("userLogin")
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")
-    UserDTO toDtoUserId(User user);
+    @Mapping(target = "login", source = "login")
+    UserDTO toDtoUserLogin(User user);
 }

@@ -1,7 +1,9 @@
 package com.lawyer.web.rest;
 
 import com.lawyer.repository.CourtCaseRepository;
+import com.lawyer.service.CourtCaseQueryService;
 import com.lawyer.service.CourtCaseService;
+import com.lawyer.service.criteria.CourtCaseCriteria;
 import com.lawyer.service.dto.CourtCaseDTO;
 import com.lawyer.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
@@ -42,9 +44,16 @@ public class CourtCaseResource {
 
     private final CourtCaseRepository courtCaseRepository;
 
-    public CourtCaseResource(CourtCaseService courtCaseService, CourtCaseRepository courtCaseRepository) {
+    private final CourtCaseQueryService courtCaseQueryService;
+
+    public CourtCaseResource(
+        CourtCaseService courtCaseService,
+        CourtCaseRepository courtCaseRepository,
+        CourtCaseQueryService courtCaseQueryService
+    ) {
         this.courtCaseService = courtCaseService;
         this.courtCaseRepository = courtCaseRepository;
+        this.courtCaseQueryService = courtCaseQueryService;
     }
 
     /**
@@ -139,14 +148,31 @@ public class CourtCaseResource {
      * {@code GET  /court-cases} : get all the courtCases.
      *
      * @param pageable the pagination information.
+     * @param criteria the criteria which the requested entities should match.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of courtCases in body.
      */
     @GetMapping("")
-    public ResponseEntity<List<CourtCaseDTO>> getAllCourtCases(@org.springdoc.core.annotations.ParameterObject Pageable pageable) {
-        LOG.debug("REST request to get a page of CourtCases");
-        Page<CourtCaseDTO> page = courtCaseService.findAll(pageable);
+    public ResponseEntity<List<CourtCaseDTO>> getAllCourtCases(
+        CourtCaseCriteria criteria,
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable
+    ) {
+        LOG.debug("REST request to get CourtCases by criteria: {}", criteria);
+
+        Page<CourtCaseDTO> page = courtCaseQueryService.findByCriteria(criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
+     * {@code GET  /court-cases/count} : count all the courtCases.
+     *
+     * @param criteria the criteria which the requested entities should match.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     */
+    @GetMapping("/count")
+    public ResponseEntity<Long> countCourtCases(CourtCaseCriteria criteria) {
+        LOG.debug("REST request to count CourtCases by criteria: {}", criteria);
+        return ResponseEntity.ok().body(courtCaseQueryService.countByCriteria(criteria));
     }
 
     /**

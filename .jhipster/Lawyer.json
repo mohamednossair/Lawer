@@ -45,7 +45,9 @@
       "fieldType": "ZonedDateTime"
     }
   ],
+  "jpaMetamodelFiltering": true,
   "name": "Lawyer",
+  "pagination": "pagination",
   "relationships": [],
   "searchEngine": "no",
   "service": "serviceClass"

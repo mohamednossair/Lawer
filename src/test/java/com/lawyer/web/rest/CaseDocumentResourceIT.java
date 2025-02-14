@@ -5,14 +5,18 @@ import static com.lawyer.web.rest.TestUtil.createUpdateProxyForBean;
 import static com.lawyer.web.rest.TestUtil.sameInstant;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lawyer.IntegrationTest;
 import com.lawyer.domain.CaseDocument;
+import com.lawyer.domain.CourtCase;
+import com.lawyer.domain.User;
 import com.lawyer.repository.CaseDocumentRepository;
 import com.lawyer.repository.UserRepository;
+import com.lawyer.service.CaseDocumentService;
 import com.lawyer.service.dto.CaseDocumentDTO;
 import com.lawyer.service.mapper.CaseDocumentMapper;
 import jakarta.persistence.EntityManager;
@@ -20,13 +24,20 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -36,6 +47,7 @@ import org.springframework.transaction.annotation.Transactional;
  * Integration tests for the {@link CaseDocumentResource} REST controller.
  */
 @IntegrationTest
+@ExtendWith(MockitoExtension.class)
 @AutoConfigureMockMvc
 @WithMockUser
 class CaseDocumentResourceIT {
@@ -46,17 +58,18 @@ class CaseDocumentResourceIT {
     private static final String DEFAULT_DOCUMENT_TYPE = "AAAAAAAAAA";
     private static final String UPDATED_DOCUMENT_TYPE = "BBBBBBBBBB";
 
-    private static final String DEFAULT_FILE_PATH = "AAAAAAAAAA";
-    private static final String UPDATED_FILE_PATH = "BBBBBBBBBB";
-
-    private static final Integer DEFAULT_UPLOADED_BY = 1;
-    private static final Integer UPDATED_UPLOADED_BY = 2;
+    private static final byte[] DEFAULT_DOCUMENT_FILE = TestUtil.createByteArray(1, "0");
+    private static final byte[] UPDATED_DOCUMENT_FILE = TestUtil.createByteArray(1, "1");
+    private static final String DEFAULT_DOCUMENT_FILE_CONTENT_TYPE = "image/jpg";
+    private static final String UPDATED_DOCUMENT_FILE_CONTENT_TYPE = "image/png";
 
     private static final ZonedDateTime DEFAULT_CREATED_AT = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
     private static final ZonedDateTime UPDATED_CREATED_AT = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
+    private static final ZonedDateTime SMALLER_CREATED_AT = ZonedDateTime.ofInstant(Instant.ofEpochMilli(-1L), ZoneOffset.UTC);
 
     private static final ZonedDateTime DEFAULT_UPDATED_AT = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
     private static final ZonedDateTime UPDATED_UPDATED_AT = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
+    private static final ZonedDateTime SMALLER_UPDATED_AT = ZonedDateTime.ofInstant(Instant.ofEpochMilli(-1L), ZoneOffset.UTC);
 
     private static final String ENTITY_API_URL = "/api/case-documents";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
@@ -73,8 +86,14 @@ class CaseDocumentResourceIT {
     @Autowired
     private UserRepository userRepository;
 
+    @Mock
+    private CaseDocumentRepository caseDocumentRepositoryMock;
+
     @Autowired
     private CaseDocumentMapper caseDocumentMapper;
+
+    @Mock
+    private CaseDocumentService caseDocumentServiceMock;
 
     @Autowired
     private EntityManager em;
@@ -96,8 +115,8 @@ class CaseDocumentResourceIT {
         return new CaseDocument()
             .documentName(DEFAULT_DOCUMENT_NAME)
             .documentType(DEFAULT_DOCUMENT_TYPE)
-            .filePath(DEFAULT_FILE_PATH)
-            .uploadedBy(DEFAULT_UPLOADED_BY)
+            .documentFile(DEFAULT_DOCUMENT_FILE)
+            .documentFileContentType(DEFAULT_DOCUMENT_FILE_CONTENT_TYPE)
             .createdAt(DEFAULT_CREATED_AT)
             .updatedAt(DEFAULT_UPDATED_AT);
     }
@@ -112,8 +131,8 @@ class CaseDocumentResourceIT {
         return new CaseDocument()
             .documentName(UPDATED_DOCUMENT_NAME)
             .documentType(UPDATED_DOCUMENT_TYPE)
-            .filePath(UPDATED_FILE_PATH)
-            .uploadedBy(UPDATED_UPLOADED_BY)
+            .documentFile(UPDATED_DOCUMENT_FILE)
+            .documentFileContentType(UPDATED_DOCUMENT_FILE_CONTENT_TYPE)
             .createdAt(UPDATED_CREATED_AT)
             .updatedAt(UPDATED_UPDATED_AT);
     }
@@ -221,10 +240,27 @@ class CaseDocumentResourceIT {
             .andExpect(jsonPath("$.[*].id").value(hasItem(caseDocument.getId().intValue())))
             .andExpect(jsonPath("$.[*].documentName").value(hasItem(DEFAULT_DOCUMENT_NAME)))
             .andExpect(jsonPath("$.[*].documentType").value(hasItem(DEFAULT_DOCUMENT_TYPE)))
-            .andExpect(jsonPath("$.[*].filePath").value(hasItem(DEFAULT_FILE_PATH)))
-            .andExpect(jsonPath("$.[*].uploadedBy").value(hasItem(DEFAULT_UPLOADED_BY)))
+            .andExpect(jsonPath("$.[*].documentFileContentType").value(hasItem(DEFAULT_DOCUMENT_FILE_CONTENT_TYPE)))
+            .andExpect(jsonPath("$.[*].documentFile").value(hasItem(Base64.getEncoder().encodeToString(DEFAULT_DOCUMENT_FILE))))
             .andExpect(jsonPath("$.[*].createdAt").value(hasItem(sameInstant(DEFAULT_CREATED_AT))))
             .andExpect(jsonPath("$.[*].updatedAt").value(hasItem(sameInstant(DEFAULT_UPDATED_AT))));
+    }
+
+    @SuppressWarnings({ "unchecked" })
+    void getAllCaseDocumentsWithEagerRelationshipsIsEnabled() throws Exception {
+        when(caseDocumentServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+
+        restCaseDocumentMockMvc.perform(get(ENTITY_API_URL + "?eagerload=true")).andExpect(status().isOk());
+
+        verify(caseDocumentServiceMock, times(1)).findAllWithEagerRelationships(any());
+    }
+
+    @SuppressWarnings({ "unchecked" })
+    void getAllCaseDocumentsWithEagerRelationshipsIsNotEnabled() throws Exception {
+        when(caseDocumentServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+
+        restCaseDocumentMockMvc.perform(get(ENTITY_API_URL + "?eagerload=false")).andExpect(status().isOk());
+        verify(caseDocumentRepositoryMock, times(1)).findAll(any(Pageable.class));
     }
 
     @Test
@@ -241,10 +277,375 @@ class CaseDocumentResourceIT {
             .andExpect(jsonPath("$.id").value(caseDocument.getId().intValue()))
             .andExpect(jsonPath("$.documentName").value(DEFAULT_DOCUMENT_NAME))
             .andExpect(jsonPath("$.documentType").value(DEFAULT_DOCUMENT_TYPE))
-            .andExpect(jsonPath("$.filePath").value(DEFAULT_FILE_PATH))
-            .andExpect(jsonPath("$.uploadedBy").value(DEFAULT_UPLOADED_BY))
+            .andExpect(jsonPath("$.documentFileContentType").value(DEFAULT_DOCUMENT_FILE_CONTENT_TYPE))
+            .andExpect(jsonPath("$.documentFile").value(Base64.getEncoder().encodeToString(DEFAULT_DOCUMENT_FILE)))
             .andExpect(jsonPath("$.createdAt").value(sameInstant(DEFAULT_CREATED_AT)))
             .andExpect(jsonPath("$.updatedAt").value(sameInstant(DEFAULT_UPDATED_AT)));
+    }
+
+    @Test
+    @Transactional
+    void getCaseDocumentsByIdFiltering() throws Exception {
+        // Initialize the database
+        insertedCaseDocument = caseDocumentRepository.saveAndFlush(caseDocument);
+
+        Long id = caseDocument.getId();
+
+        defaultCaseDocumentFiltering("id.equals=" + id, "id.notEquals=" + id);
+
+        defaultCaseDocumentFiltering("id.greaterThanOrEqual=" + id, "id.greaterThan=" + id);
+
+        defaultCaseDocumentFiltering("id.lessThanOrEqual=" + id, "id.lessThan=" + id);
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseDocumentsByDocumentNameIsEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedCaseDocument = caseDocumentRepository.saveAndFlush(caseDocument);
+
+        // Get all the caseDocumentList where documentName equals to
+        defaultCaseDocumentFiltering("documentName.equals=" + DEFAULT_DOCUMENT_NAME, "documentName.equals=" + UPDATED_DOCUMENT_NAME);
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseDocumentsByDocumentNameIsInShouldWork() throws Exception {
+        // Initialize the database
+        insertedCaseDocument = caseDocumentRepository.saveAndFlush(caseDocument);
+
+        // Get all the caseDocumentList where documentName in
+        defaultCaseDocumentFiltering(
+            "documentName.in=" + DEFAULT_DOCUMENT_NAME + "," + UPDATED_DOCUMENT_NAME,
+            "documentName.in=" + UPDATED_DOCUMENT_NAME
+        );
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseDocumentsByDocumentNameIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        insertedCaseDocument = caseDocumentRepository.saveAndFlush(caseDocument);
+
+        // Get all the caseDocumentList where documentName is not null
+        defaultCaseDocumentFiltering("documentName.specified=true", "documentName.specified=false");
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseDocumentsByDocumentNameContainsSomething() throws Exception {
+        // Initialize the database
+        insertedCaseDocument = caseDocumentRepository.saveAndFlush(caseDocument);
+
+        // Get all the caseDocumentList where documentName contains
+        defaultCaseDocumentFiltering("documentName.contains=" + DEFAULT_DOCUMENT_NAME, "documentName.contains=" + UPDATED_DOCUMENT_NAME);
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseDocumentsByDocumentNameNotContainsSomething() throws Exception {
+        // Initialize the database
+        insertedCaseDocument = caseDocumentRepository.saveAndFlush(caseDocument);
+
+        // Get all the caseDocumentList where documentName does not contain
+        defaultCaseDocumentFiltering(
+            "documentName.doesNotContain=" + UPDATED_DOCUMENT_NAME,
+            "documentName.doesNotContain=" + DEFAULT_DOCUMENT_NAME
+        );
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseDocumentsByDocumentTypeIsEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedCaseDocument = caseDocumentRepository.saveAndFlush(caseDocument);
+
+        // Get all the caseDocumentList where documentType equals to
+        defaultCaseDocumentFiltering("documentType.equals=" + DEFAULT_DOCUMENT_TYPE, "documentType.equals=" + UPDATED_DOCUMENT_TYPE);
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseDocumentsByDocumentTypeIsInShouldWork() throws Exception {
+        // Initialize the database
+        insertedCaseDocument = caseDocumentRepository.saveAndFlush(caseDocument);
+
+        // Get all the caseDocumentList where documentType in
+        defaultCaseDocumentFiltering(
+            "documentType.in=" + DEFAULT_DOCUMENT_TYPE + "," + UPDATED_DOCUMENT_TYPE,
+            "documentType.in=" + UPDATED_DOCUMENT_TYPE
+        );
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseDocumentsByDocumentTypeIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        insertedCaseDocument = caseDocumentRepository.saveAndFlush(caseDocument);
+
+        // Get all the caseDocumentList where documentType is not null
+        defaultCaseDocumentFiltering("documentType.specified=true", "documentType.specified=false");
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseDocumentsByDocumentTypeContainsSomething() throws Exception {
+        // Initialize the database
+        insertedCaseDocument = caseDocumentRepository.saveAndFlush(caseDocument);
+
+        // Get all the caseDocumentList where documentType contains
+        defaultCaseDocumentFiltering("documentType.contains=" + DEFAULT_DOCUMENT_TYPE, "documentType.contains=" + UPDATED_DOCUMENT_TYPE);
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseDocumentsByDocumentTypeNotContainsSomething() throws Exception {
+        // Initialize the database
+        insertedCaseDocument = caseDocumentRepository.saveAndFlush(caseDocument);
+
+        // Get all the caseDocumentList where documentType does not contain
+        defaultCaseDocumentFiltering(
+            "documentType.doesNotContain=" + UPDATED_DOCUMENT_TYPE,
+            "documentType.doesNotContain=" + DEFAULT_DOCUMENT_TYPE
+        );
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseDocumentsByCreatedAtIsEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedCaseDocument = caseDocumentRepository.saveAndFlush(caseDocument);
+
+        // Get all the caseDocumentList where createdAt equals to
+        defaultCaseDocumentFiltering("createdAt.equals=" + DEFAULT_CREATED_AT, "createdAt.equals=" + UPDATED_CREATED_AT);
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseDocumentsByCreatedAtIsInShouldWork() throws Exception {
+        // Initialize the database
+        insertedCaseDocument = caseDocumentRepository.saveAndFlush(caseDocument);
+
+        // Get all the caseDocumentList where createdAt in
+        defaultCaseDocumentFiltering("createdAt.in=" + DEFAULT_CREATED_AT + "," + UPDATED_CREATED_AT, "createdAt.in=" + UPDATED_CREATED_AT);
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseDocumentsByCreatedAtIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        insertedCaseDocument = caseDocumentRepository.saveAndFlush(caseDocument);
+
+        // Get all the caseDocumentList where createdAt is not null
+        defaultCaseDocumentFiltering("createdAt.specified=true", "createdAt.specified=false");
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseDocumentsByCreatedAtIsGreaterThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedCaseDocument = caseDocumentRepository.saveAndFlush(caseDocument);
+
+        // Get all the caseDocumentList where createdAt is greater than or equal to
+        defaultCaseDocumentFiltering(
+            "createdAt.greaterThanOrEqual=" + DEFAULT_CREATED_AT,
+            "createdAt.greaterThanOrEqual=" + UPDATED_CREATED_AT
+        );
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseDocumentsByCreatedAtIsLessThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedCaseDocument = caseDocumentRepository.saveAndFlush(caseDocument);
+
+        // Get all the caseDocumentList where createdAt is less than or equal to
+        defaultCaseDocumentFiltering("createdAt.lessThanOrEqual=" + DEFAULT_CREATED_AT, "createdAt.lessThanOrEqual=" + SMALLER_CREATED_AT);
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseDocumentsByCreatedAtIsLessThanSomething() throws Exception {
+        // Initialize the database
+        insertedCaseDocument = caseDocumentRepository.saveAndFlush(caseDocument);
+
+        // Get all the caseDocumentList where createdAt is less than
+        defaultCaseDocumentFiltering("createdAt.lessThan=" + UPDATED_CREATED_AT, "createdAt.lessThan=" + DEFAULT_CREATED_AT);
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseDocumentsByCreatedAtIsGreaterThanSomething() throws Exception {
+        // Initialize the database
+        insertedCaseDocument = caseDocumentRepository.saveAndFlush(caseDocument);
+
+        // Get all the caseDocumentList where createdAt is greater than
+        defaultCaseDocumentFiltering("createdAt.greaterThan=" + SMALLER_CREATED_AT, "createdAt.greaterThan=" + DEFAULT_CREATED_AT);
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseDocumentsByUpdatedAtIsEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedCaseDocument = caseDocumentRepository.saveAndFlush(caseDocument);
+
+        // Get all the caseDocumentList where updatedAt equals to
+        defaultCaseDocumentFiltering("updatedAt.equals=" + DEFAULT_UPDATED_AT, "updatedAt.equals=" + UPDATED_UPDATED_AT);
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseDocumentsByUpdatedAtIsInShouldWork() throws Exception {
+        // Initialize the database
+        insertedCaseDocument = caseDocumentRepository.saveAndFlush(caseDocument);
+
+        // Get all the caseDocumentList where updatedAt in
+        defaultCaseDocumentFiltering("updatedAt.in=" + DEFAULT_UPDATED_AT + "," + UPDATED_UPDATED_AT, "updatedAt.in=" + UPDATED_UPDATED_AT);
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseDocumentsByUpdatedAtIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        insertedCaseDocument = caseDocumentRepository.saveAndFlush(caseDocument);
+
+        // Get all the caseDocumentList where updatedAt is not null
+        defaultCaseDocumentFiltering("updatedAt.specified=true", "updatedAt.specified=false");
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseDocumentsByUpdatedAtIsGreaterThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedCaseDocument = caseDocumentRepository.saveAndFlush(caseDocument);
+
+        // Get all the caseDocumentList where updatedAt is greater than or equal to
+        defaultCaseDocumentFiltering(
+            "updatedAt.greaterThanOrEqual=" + DEFAULT_UPDATED_AT,
+            "updatedAt.greaterThanOrEqual=" + UPDATED_UPDATED_AT
+        );
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseDocumentsByUpdatedAtIsLessThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedCaseDocument = caseDocumentRepository.saveAndFlush(caseDocument);
+
+        // Get all the caseDocumentList where updatedAt is less than or equal to
+        defaultCaseDocumentFiltering("updatedAt.lessThanOrEqual=" + DEFAULT_UPDATED_AT, "updatedAt.lessThanOrEqual=" + SMALLER_UPDATED_AT);
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseDocumentsByUpdatedAtIsLessThanSomething() throws Exception {
+        // Initialize the database
+        insertedCaseDocument = caseDocumentRepository.saveAndFlush(caseDocument);
+
+        // Get all the caseDocumentList where updatedAt is less than
+        defaultCaseDocumentFiltering("updatedAt.lessThan=" + UPDATED_UPDATED_AT, "updatedAt.lessThan=" + DEFAULT_UPDATED_AT);
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseDocumentsByUpdatedAtIsGreaterThanSomething() throws Exception {
+        // Initialize the database
+        insertedCaseDocument = caseDocumentRepository.saveAndFlush(caseDocument);
+
+        // Get all the caseDocumentList where updatedAt is greater than
+        defaultCaseDocumentFiltering("updatedAt.greaterThan=" + SMALLER_UPDATED_AT, "updatedAt.greaterThan=" + DEFAULT_UPDATED_AT);
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseDocumentsByCourtCaseIsEqualToSomething() throws Exception {
+        CourtCase courtCase;
+        if (TestUtil.findAll(em, CourtCase.class).isEmpty()) {
+            caseDocumentRepository.saveAndFlush(caseDocument);
+            courtCase = CourtCaseResourceIT.createEntity(em);
+        } else {
+            courtCase = TestUtil.findAll(em, CourtCase.class).get(0);
+        }
+        em.persist(courtCase);
+        em.flush();
+        caseDocument.setCourtCase(courtCase);
+        caseDocumentRepository.saveAndFlush(caseDocument);
+        Long courtCaseId = courtCase.getId();
+        // Get all the caseDocumentList where courtCase equals to courtCaseId
+        defaultCaseDocumentShouldBeFound("courtCaseId.equals=" + courtCaseId);
+
+        // Get all the caseDocumentList where courtCase equals to (courtCaseId + 1)
+        defaultCaseDocumentShouldNotBeFound("courtCaseId.equals=" + (courtCaseId + 1));
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseDocumentsByUserIsEqualToSomething() throws Exception {
+        User user;
+        if (TestUtil.findAll(em, User.class).isEmpty()) {
+            caseDocumentRepository.saveAndFlush(caseDocument);
+            user = UserResourceIT.createEntity();
+        } else {
+            user = TestUtil.findAll(em, User.class).get(0);
+        }
+        em.persist(user);
+        em.flush();
+        caseDocument.setUser(user);
+        caseDocumentRepository.saveAndFlush(caseDocument);
+        Long userId = user.getId();
+        // Get all the caseDocumentList where user equals to userId
+        defaultCaseDocumentShouldBeFound("userId.equals=" + userId);
+
+        // Get all the caseDocumentList where user equals to (userId + 1)
+        defaultCaseDocumentShouldNotBeFound("userId.equals=" + (userId + 1));
+    }
+
+    private void defaultCaseDocumentFiltering(String shouldBeFound, String shouldNotBeFound) throws Exception {
+        defaultCaseDocumentShouldBeFound(shouldBeFound);
+        defaultCaseDocumentShouldNotBeFound(shouldNotBeFound);
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is returned.
+     */
+    private void defaultCaseDocumentShouldBeFound(String filter) throws Exception {
+        restCaseDocumentMockMvc
+            .perform(get(ENTITY_API_URL + "?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(caseDocument.getId().intValue())))
+            .andExpect(jsonPath("$.[*].documentName").value(hasItem(DEFAULT_DOCUMENT_NAME)))
+            .andExpect(jsonPath("$.[*].documentType").value(hasItem(DEFAULT_DOCUMENT_TYPE)))
+            .andExpect(jsonPath("$.[*].documentFileContentType").value(hasItem(DEFAULT_DOCUMENT_FILE_CONTENT_TYPE)))
+            .andExpect(jsonPath("$.[*].documentFile").value(hasItem(Base64.getEncoder().encodeToString(DEFAULT_DOCUMENT_FILE))))
+            .andExpect(jsonPath("$.[*].createdAt").value(hasItem(sameInstant(DEFAULT_CREATED_AT))))
+            .andExpect(jsonPath("$.[*].updatedAt").value(hasItem(sameInstant(DEFAULT_UPDATED_AT))));
+
+        // Check, that the count call also returns 1
+        restCaseDocumentMockMvc
+            .perform(get(ENTITY_API_URL + "/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(content().string("1"));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is not returned.
+     */
+    private void defaultCaseDocumentShouldNotBeFound(String filter) throws Exception {
+        restCaseDocumentMockMvc
+            .perform(get(ENTITY_API_URL + "?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(jsonPath("$").isArray())
+            .andExpect(jsonPath("$").isEmpty());
+
+        // Check, that the count call also returns 0
+        restCaseDocumentMockMvc
+            .perform(get(ENTITY_API_URL + "/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(content().string("0"));
     }
 
     @Test
@@ -269,8 +670,8 @@ class CaseDocumentResourceIT {
         updatedCaseDocument
             .documentName(UPDATED_DOCUMENT_NAME)
             .documentType(UPDATED_DOCUMENT_TYPE)
-            .filePath(UPDATED_FILE_PATH)
-            .uploadedBy(UPDATED_UPLOADED_BY)
+            .documentFile(UPDATED_DOCUMENT_FILE)
+            .documentFileContentType(UPDATED_DOCUMENT_FILE_CONTENT_TYPE)
             .createdAt(UPDATED_CREATED_AT)
             .updatedAt(UPDATED_UPDATED_AT);
         CaseDocumentDTO caseDocumentDTO = caseDocumentMapper.toDto(updatedCaseDocument);
@@ -365,8 +766,8 @@ class CaseDocumentResourceIT {
         partialUpdatedCaseDocument
             .documentName(UPDATED_DOCUMENT_NAME)
             .documentType(UPDATED_DOCUMENT_TYPE)
-            .filePath(UPDATED_FILE_PATH)
-            .updatedAt(UPDATED_UPDATED_AT);
+            .documentFile(UPDATED_DOCUMENT_FILE)
+            .documentFileContentType(UPDATED_DOCUMENT_FILE_CONTENT_TYPE);
 
         restCaseDocumentMockMvc
             .perform(
@@ -400,8 +801,8 @@ class CaseDocumentResourceIT {
         partialUpdatedCaseDocument
             .documentName(UPDATED_DOCUMENT_NAME)
             .documentType(UPDATED_DOCUMENT_TYPE)
-            .filePath(UPDATED_FILE_PATH)
-            .uploadedBy(UPDATED_UPLOADED_BY)
+            .documentFile(UPDATED_DOCUMENT_FILE)
+            .documentFileContentType(UPDATED_DOCUMENT_FILE_CONTENT_TYPE)
             .createdAt(UPDATED_CREATED_AT)
             .updatedAt(UPDATED_UPDATED_AT);
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button, Table } from 'reactstrap';
-import { JhiItemCount, JhiPagination, TextFormat, Translate, getPaginationState } from 'react-jhipster';
+import { JhiItemCount, JhiPagination, TextFormat, Translate, byteSize, getPaginationState, openFile } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSort, faSortDown, faSortUp } from '@fortawesome/free-solid-svg-icons';
 import { APP_DATE_FORMAT } from 'app/config/constants';
@@ -121,13 +121,9 @@ export const CaseDocument = () => {
                   <Translate contentKey="lawyerApp.caseDocument.documentType">Document Type</Translate>{' '}
                   <FontAwesomeIcon icon={getSortIconByFieldName('documentType')} />
                 </th>
-                <th className="hand" onClick={sort('filePath')}>
-                  <Translate contentKey="lawyerApp.caseDocument.filePath">File Path</Translate>{' '}
-                  <FontAwesomeIcon icon={getSortIconByFieldName('filePath')} />
-                </th>
-                <th className="hand" onClick={sort('uploadedBy')}>
-                  <Translate contentKey="lawyerApp.caseDocument.uploadedBy">Uploaded By</Translate>{' '}
-                  <FontAwesomeIcon icon={getSortIconByFieldName('uploadedBy')} />
+                <th className="hand" onClick={sort('documentFile')}>
+                  <Translate contentKey="lawyerApp.caseDocument.documentFile">Document File</Translate>{' '}
+                  <FontAwesomeIcon icon={getSortIconByFieldName('documentFile')} />
                 </th>
                 <th className="hand" onClick={sort('createdAt')}>
                   <Translate contentKey="lawyerApp.caseDocument.createdAt">Created At</Translate>{' '}
@@ -156,8 +152,21 @@ export const CaseDocument = () => {
                   </td>
                   <td>{caseDocument.documentName}</td>
                   <td>{caseDocument.documentType}</td>
-                  <td>{caseDocument.filePath}</td>
-                  <td>{caseDocument.uploadedBy}</td>
+                  <td>
+                    {caseDocument.documentFile ? (
+                      <div>
+                        {caseDocument.documentFileContentType ? (
+                          <a onClick={openFile(caseDocument.documentFileContentType, caseDocument.documentFile)}>
+                            <Translate contentKey="entity.action.open">Open</Translate>
+                            &nbsp;
+                          </a>
+                        ) : null}
+                        <span>
+                          {caseDocument.documentFileContentType}, {byteSize(caseDocument.documentFile)}
+                        </span>
+                      </div>
+                    ) : null}
+                  </td>
                   <td>
                     {caseDocument.createdAt ? <TextFormat type="date" value={caseDocument.createdAt} format={APP_DATE_FORMAT} /> : null}
                   </td>
@@ -165,9 +174,13 @@ export const CaseDocument = () => {
                     {caseDocument.updatedAt ? <TextFormat type="date" value={caseDocument.updatedAt} format={APP_DATE_FORMAT} /> : null}
                   </td>
                   <td>
-                    {caseDocument.courtCase ? <Link to={`/court-case/${caseDocument.courtCase.id}`}>{caseDocument.courtCase.id}</Link> : ''}
+                    {caseDocument.courtCase ? (
+                      <Link to={`/court-case/${caseDocument.courtCase.id}`}>{caseDocument.courtCase.caseNumber}</Link>
+                    ) : (
+                      ''
+                    )}
                   </td>
-                  <td>{caseDocument.user ? caseDocument.user.id : ''}</td>
+                  <td>{caseDocument.user ? caseDocument.user.login : ''}</td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`/case-document/${caseDocument.id}`} color="info" size="sm" data-cy="entityDetailsButton">

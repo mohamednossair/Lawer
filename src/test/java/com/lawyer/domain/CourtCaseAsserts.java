@@ -48,7 +48,7 @@ public class CourtCaseAsserts {
     public static void assertCourtCaseUpdatableFieldsEquals(CourtCase expected, CourtCase actual) {
         assertThat(expected)
             .as("Verify CourtCase relevant properties")
-            .satisfies(e -> assertThat(e.getNumber()).as("check number").isEqualTo(actual.getNumber()))
+            .satisfies(e -> assertThat(e.getCaseNumber()).as("check caseNumber").isEqualTo(actual.getCaseNumber()))
             .satisfies(e -> assertThat(e.getCaseYear()).as("check caseYear").isEqualTo(actual.getCaseYear()))
             .satisfies(e -> assertThat(e.getCourtCircuit()).as("check courtCircuit").isEqualTo(actual.getCourtCircuit()))
             .satisfies(e -> assertThat(e.getRegistrationDate()).as("check registrationDate").isEqualTo(actual.getRegistrationDate()))

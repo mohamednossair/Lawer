@@ -35,10 +35,12 @@
       "fieldType": "ZonedDateTime"
     }
   ],
+  "jpaMetamodelFiltering": true,
   "name": "CaseSession",
   "pagination": "pagination",
   "relationships": [
     {
+      "otherEntityField": "caseNumber",
       "otherEntityName": "courtCase",
       "relationshipName": "courtCase",
       "relationshipSide": "left",

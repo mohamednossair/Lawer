@@ -1,7 +1,9 @@
 package com.lawyer.web.rest;
 
 import com.lawyer.repository.CaseDocumentRepository;
+import com.lawyer.service.CaseDocumentQueryService;
 import com.lawyer.service.CaseDocumentService;
+import com.lawyer.service.criteria.CaseDocumentCriteria;
 import com.lawyer.service.dto.CaseDocumentDTO;
 import com.lawyer.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
@@ -42,9 +44,16 @@ public class CaseDocumentResource {
 
     private final CaseDocumentRepository caseDocumentRepository;
 
-    public CaseDocumentResource(CaseDocumentService caseDocumentService, CaseDocumentRepository caseDocumentRepository) {
+    private final CaseDocumentQueryService caseDocumentQueryService;
+
+    public CaseDocumentResource(
+        CaseDocumentService caseDocumentService,
+        CaseDocumentRepository caseDocumentRepository,
+        CaseDocumentQueryService caseDocumentQueryService
+    ) {
         this.caseDocumentService = caseDocumentService;
         this.caseDocumentRepository = caseDocumentRepository;
+        this.caseDocumentQueryService = caseDocumentQueryService;
     }
 
     /**
@@ -140,14 +149,31 @@ public class CaseDocumentResource {
      * {@code GET  /case-documents} : get all the caseDocuments.
      *
      * @param pageable the pagination information.
+     * @param criteria the criteria which the requested entities should match.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of caseDocuments in body.
      */
     @GetMapping("")
-    public ResponseEntity<List<CaseDocumentDTO>> getAllCaseDocuments(@org.springdoc.core.annotations.ParameterObject Pageable pageable) {
-        LOG.debug("REST request to get a page of CaseDocuments");
-        Page<CaseDocumentDTO> page = caseDocumentService.findAll(pageable);
+    public ResponseEntity<List<CaseDocumentDTO>> getAllCaseDocuments(
+        CaseDocumentCriteria criteria,
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable
+    ) {
+        LOG.debug("REST request to get CaseDocuments by criteria: {}", criteria);
+
+        Page<CaseDocumentDTO> page = caseDocumentQueryService.findByCriteria(criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
+     * {@code GET  /case-documents/count} : count all the caseDocuments.
+     *
+     * @param criteria the criteria which the requested entities should match.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     */
+    @GetMapping("/count")
+    public ResponseEntity<Long> countCaseDocuments(CaseDocumentCriteria criteria) {
+        LOG.debug("REST request to count CaseDocuments by criteria: {}", criteria);
+        return ResponseEntity.ok().body(caseDocumentQueryService.countByCriteria(criteria));
     }
 
     /**

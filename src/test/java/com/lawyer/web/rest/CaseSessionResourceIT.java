@@ -5,13 +5,16 @@ import static com.lawyer.web.rest.TestUtil.createUpdateProxyForBean;
 import static com.lawyer.web.rest.TestUtil.sameInstant;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lawyer.IntegrationTest;
 import com.lawyer.domain.CaseSession;
+import com.lawyer.domain.CourtCase;
 import com.lawyer.repository.CaseSessionRepository;
+import com.lawyer.service.CaseSessionService;
 import com.lawyer.service.dto.CaseSessionDTO;
 import com.lawyer.service.mapper.CaseSessionMapper;
 import jakarta.persistence.EntityManager;
@@ -20,13 +23,19 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -36,15 +45,18 @@ import org.springframework.transaction.annotation.Transactional;
  * Integration tests for the {@link CaseSessionResource} REST controller.
  */
 @IntegrationTest
+@ExtendWith(MockitoExtension.class)
 @AutoConfigureMockMvc
 @WithMockUser
 class CaseSessionResourceIT {
 
     private static final LocalDate DEFAULT_SESSION_DATE = LocalDate.ofEpochDay(0L);
     private static final LocalDate UPDATED_SESSION_DATE = LocalDate.now(ZoneId.systemDefault());
+    private static final LocalDate SMALLER_SESSION_DATE = LocalDate.ofEpochDay(-1L);
 
     private static final ZonedDateTime DEFAULT_SESSION_TIME = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
     private static final ZonedDateTime UPDATED_SESSION_TIME = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
+    private static final ZonedDateTime SMALLER_SESSION_TIME = ZonedDateTime.ofInstant(Instant.ofEpochMilli(-1L), ZoneOffset.UTC);
 
     private static final String DEFAULT_DESCRIPTION = "AAAAAAAAAA";
     private static final String UPDATED_DESCRIPTION = "BBBBBBBBBB";
@@ -54,9 +66,11 @@ class CaseSessionResourceIT {
 
     private static final ZonedDateTime DEFAULT_CREATED_AT = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
     private static final ZonedDateTime UPDATED_CREATED_AT = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
+    private static final ZonedDateTime SMALLER_CREATED_AT = ZonedDateTime.ofInstant(Instant.ofEpochMilli(-1L), ZoneOffset.UTC);
 
     private static final ZonedDateTime DEFAULT_UPDATED_AT = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
     private static final ZonedDateTime UPDATED_UPDATED_AT = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
+    private static final ZonedDateTime SMALLER_UPDATED_AT = ZonedDateTime.ofInstant(Instant.ofEpochMilli(-1L), ZoneOffset.UTC);
 
     private static final String ENTITY_API_URL = "/api/case-sessions";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
@@ -70,8 +84,14 @@ class CaseSessionResourceIT {
     @Autowired
     private CaseSessionRepository caseSessionRepository;
 
+    @Mock
+    private CaseSessionRepository caseSessionRepositoryMock;
+
     @Autowired
     private CaseSessionMapper caseSessionMapper;
+
+    @Mock
+    private CaseSessionService caseSessionServiceMock;
 
     @Autowired
     private EntityManager em;
@@ -207,6 +227,23 @@ class CaseSessionResourceIT {
             .andExpect(jsonPath("$.[*].updatedAt").value(hasItem(sameInstant(DEFAULT_UPDATED_AT))));
     }
 
+    @SuppressWarnings({ "unchecked" })
+    void getAllCaseSessionsWithEagerRelationshipsIsEnabled() throws Exception {
+        when(caseSessionServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+
+        restCaseSessionMockMvc.perform(get(ENTITY_API_URL + "?eagerload=true")).andExpect(status().isOk());
+
+        verify(caseSessionServiceMock, times(1)).findAllWithEagerRelationships(any());
+    }
+
+    @SuppressWarnings({ "unchecked" })
+    void getAllCaseSessionsWithEagerRelationshipsIsNotEnabled() throws Exception {
+        when(caseSessionServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+
+        restCaseSessionMockMvc.perform(get(ENTITY_API_URL + "?eagerload=false")).andExpect(status().isOk());
+        verify(caseSessionRepositoryMock, times(1)).findAll(any(Pageable.class));
+    }
+
     @Test
     @Transactional
     void getCaseSession() throws Exception {
@@ -225,6 +262,501 @@ class CaseSessionResourceIT {
             .andExpect(jsonPath("$.notes").value(DEFAULT_NOTES))
             .andExpect(jsonPath("$.createdAt").value(sameInstant(DEFAULT_CREATED_AT)))
             .andExpect(jsonPath("$.updatedAt").value(sameInstant(DEFAULT_UPDATED_AT)));
+    }
+
+    @Test
+    @Transactional
+    void getCaseSessionsByIdFiltering() throws Exception {
+        // Initialize the database
+        insertedCaseSession = caseSessionRepository.saveAndFlush(caseSession);
+
+        Long id = caseSession.getId();
+
+        defaultCaseSessionFiltering("id.equals=" + id, "id.notEquals=" + id);
+
+        defaultCaseSessionFiltering("id.greaterThanOrEqual=" + id, "id.greaterThan=" + id);
+
+        defaultCaseSessionFiltering("id.lessThanOrEqual=" + id, "id.lessThan=" + id);
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseSessionsBySessionDateIsEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedCaseSession = caseSessionRepository.saveAndFlush(caseSession);
+
+        // Get all the caseSessionList where sessionDate equals to
+        defaultCaseSessionFiltering("sessionDate.equals=" + DEFAULT_SESSION_DATE, "sessionDate.equals=" + UPDATED_SESSION_DATE);
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseSessionsBySessionDateIsInShouldWork() throws Exception {
+        // Initialize the database
+        insertedCaseSession = caseSessionRepository.saveAndFlush(caseSession);
+
+        // Get all the caseSessionList where sessionDate in
+        defaultCaseSessionFiltering(
+            "sessionDate.in=" + DEFAULT_SESSION_DATE + "," + UPDATED_SESSION_DATE,
+            "sessionDate.in=" + UPDATED_SESSION_DATE
+        );
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseSessionsBySessionDateIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        insertedCaseSession = caseSessionRepository.saveAndFlush(caseSession);
+
+        // Get all the caseSessionList where sessionDate is not null
+        defaultCaseSessionFiltering("sessionDate.specified=true", "sessionDate.specified=false");
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseSessionsBySessionDateIsGreaterThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedCaseSession = caseSessionRepository.saveAndFlush(caseSession);
+
+        // Get all the caseSessionList where sessionDate is greater than or equal to
+        defaultCaseSessionFiltering(
+            "sessionDate.greaterThanOrEqual=" + DEFAULT_SESSION_DATE,
+            "sessionDate.greaterThanOrEqual=" + UPDATED_SESSION_DATE
+        );
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseSessionsBySessionDateIsLessThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedCaseSession = caseSessionRepository.saveAndFlush(caseSession);
+
+        // Get all the caseSessionList where sessionDate is less than or equal to
+        defaultCaseSessionFiltering(
+            "sessionDate.lessThanOrEqual=" + DEFAULT_SESSION_DATE,
+            "sessionDate.lessThanOrEqual=" + SMALLER_SESSION_DATE
+        );
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseSessionsBySessionDateIsLessThanSomething() throws Exception {
+        // Initialize the database
+        insertedCaseSession = caseSessionRepository.saveAndFlush(caseSession);
+
+        // Get all the caseSessionList where sessionDate is less than
+        defaultCaseSessionFiltering("sessionDate.lessThan=" + UPDATED_SESSION_DATE, "sessionDate.lessThan=" + DEFAULT_SESSION_DATE);
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseSessionsBySessionDateIsGreaterThanSomething() throws Exception {
+        // Initialize the database
+        insertedCaseSession = caseSessionRepository.saveAndFlush(caseSession);
+
+        // Get all the caseSessionList where sessionDate is greater than
+        defaultCaseSessionFiltering("sessionDate.greaterThan=" + SMALLER_SESSION_DATE, "sessionDate.greaterThan=" + DEFAULT_SESSION_DATE);
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseSessionsBySessionTimeIsEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedCaseSession = caseSessionRepository.saveAndFlush(caseSession);
+
+        // Get all the caseSessionList where sessionTime equals to
+        defaultCaseSessionFiltering("sessionTime.equals=" + DEFAULT_SESSION_TIME, "sessionTime.equals=" + UPDATED_SESSION_TIME);
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseSessionsBySessionTimeIsInShouldWork() throws Exception {
+        // Initialize the database
+        insertedCaseSession = caseSessionRepository.saveAndFlush(caseSession);
+
+        // Get all the caseSessionList where sessionTime in
+        defaultCaseSessionFiltering(
+            "sessionTime.in=" + DEFAULT_SESSION_TIME + "," + UPDATED_SESSION_TIME,
+            "sessionTime.in=" + UPDATED_SESSION_TIME
+        );
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseSessionsBySessionTimeIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        insertedCaseSession = caseSessionRepository.saveAndFlush(caseSession);
+
+        // Get all the caseSessionList where sessionTime is not null
+        defaultCaseSessionFiltering("sessionTime.specified=true", "sessionTime.specified=false");
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseSessionsBySessionTimeIsGreaterThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedCaseSession = caseSessionRepository.saveAndFlush(caseSession);
+
+        // Get all the caseSessionList where sessionTime is greater than or equal to
+        defaultCaseSessionFiltering(
+            "sessionTime.greaterThanOrEqual=" + DEFAULT_SESSION_TIME,
+            "sessionTime.greaterThanOrEqual=" + UPDATED_SESSION_TIME
+        );
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseSessionsBySessionTimeIsLessThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedCaseSession = caseSessionRepository.saveAndFlush(caseSession);
+
+        // Get all the caseSessionList where sessionTime is less than or equal to
+        defaultCaseSessionFiltering(
+            "sessionTime.lessThanOrEqual=" + DEFAULT_SESSION_TIME,
+            "sessionTime.lessThanOrEqual=" + SMALLER_SESSION_TIME
+        );
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseSessionsBySessionTimeIsLessThanSomething() throws Exception {
+        // Initialize the database
+        insertedCaseSession = caseSessionRepository.saveAndFlush(caseSession);
+
+        // Get all the caseSessionList where sessionTime is less than
+        defaultCaseSessionFiltering("sessionTime.lessThan=" + UPDATED_SESSION_TIME, "sessionTime.lessThan=" + DEFAULT_SESSION_TIME);
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseSessionsBySessionTimeIsGreaterThanSomething() throws Exception {
+        // Initialize the database
+        insertedCaseSession = caseSessionRepository.saveAndFlush(caseSession);
+
+        // Get all the caseSessionList where sessionTime is greater than
+        defaultCaseSessionFiltering("sessionTime.greaterThan=" + SMALLER_SESSION_TIME, "sessionTime.greaterThan=" + DEFAULT_SESSION_TIME);
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseSessionsByDescriptionIsEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedCaseSession = caseSessionRepository.saveAndFlush(caseSession);
+
+        // Get all the caseSessionList where description equals to
+        defaultCaseSessionFiltering("description.equals=" + DEFAULT_DESCRIPTION, "description.equals=" + UPDATED_DESCRIPTION);
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseSessionsByDescriptionIsInShouldWork() throws Exception {
+        // Initialize the database
+        insertedCaseSession = caseSessionRepository.saveAndFlush(caseSession);
+
+        // Get all the caseSessionList where description in
+        defaultCaseSessionFiltering(
+            "description.in=" + DEFAULT_DESCRIPTION + "," + UPDATED_DESCRIPTION,
+            "description.in=" + UPDATED_DESCRIPTION
+        );
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseSessionsByDescriptionIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        insertedCaseSession = caseSessionRepository.saveAndFlush(caseSession);
+
+        // Get all the caseSessionList where description is not null
+        defaultCaseSessionFiltering("description.specified=true", "description.specified=false");
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseSessionsByDescriptionContainsSomething() throws Exception {
+        // Initialize the database
+        insertedCaseSession = caseSessionRepository.saveAndFlush(caseSession);
+
+        // Get all the caseSessionList where description contains
+        defaultCaseSessionFiltering("description.contains=" + DEFAULT_DESCRIPTION, "description.contains=" + UPDATED_DESCRIPTION);
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseSessionsByDescriptionNotContainsSomething() throws Exception {
+        // Initialize the database
+        insertedCaseSession = caseSessionRepository.saveAndFlush(caseSession);
+
+        // Get all the caseSessionList where description does not contain
+        defaultCaseSessionFiltering(
+            "description.doesNotContain=" + UPDATED_DESCRIPTION,
+            "description.doesNotContain=" + DEFAULT_DESCRIPTION
+        );
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseSessionsByNotesIsEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedCaseSession = caseSessionRepository.saveAndFlush(caseSession);
+
+        // Get all the caseSessionList where notes equals to
+        defaultCaseSessionFiltering("notes.equals=" + DEFAULT_NOTES, "notes.equals=" + UPDATED_NOTES);
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseSessionsByNotesIsInShouldWork() throws Exception {
+        // Initialize the database
+        insertedCaseSession = caseSessionRepository.saveAndFlush(caseSession);
+
+        // Get all the caseSessionList where notes in
+        defaultCaseSessionFiltering("notes.in=" + DEFAULT_NOTES + "," + UPDATED_NOTES, "notes.in=" + UPDATED_NOTES);
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseSessionsByNotesIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        insertedCaseSession = caseSessionRepository.saveAndFlush(caseSession);
+
+        // Get all the caseSessionList where notes is not null
+        defaultCaseSessionFiltering("notes.specified=true", "notes.specified=false");
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseSessionsByNotesContainsSomething() throws Exception {
+        // Initialize the database
+        insertedCaseSession = caseSessionRepository.saveAndFlush(caseSession);
+
+        // Get all the caseSessionList where notes contains
+        defaultCaseSessionFiltering("notes.contains=" + DEFAULT_NOTES, "notes.contains=" + UPDATED_NOTES);
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseSessionsByNotesNotContainsSomething() throws Exception {
+        // Initialize the database
+        insertedCaseSession = caseSessionRepository.saveAndFlush(caseSession);
+
+        // Get all the caseSessionList where notes does not contain
+        defaultCaseSessionFiltering("notes.doesNotContain=" + UPDATED_NOTES, "notes.doesNotContain=" + DEFAULT_NOTES);
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseSessionsByCreatedAtIsEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedCaseSession = caseSessionRepository.saveAndFlush(caseSession);
+
+        // Get all the caseSessionList where createdAt equals to
+        defaultCaseSessionFiltering("createdAt.equals=" + DEFAULT_CREATED_AT, "createdAt.equals=" + UPDATED_CREATED_AT);
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseSessionsByCreatedAtIsInShouldWork() throws Exception {
+        // Initialize the database
+        insertedCaseSession = caseSessionRepository.saveAndFlush(caseSession);
+
+        // Get all the caseSessionList where createdAt in
+        defaultCaseSessionFiltering("createdAt.in=" + DEFAULT_CREATED_AT + "," + UPDATED_CREATED_AT, "createdAt.in=" + UPDATED_CREATED_AT);
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseSessionsByCreatedAtIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        insertedCaseSession = caseSessionRepository.saveAndFlush(caseSession);
+
+        // Get all the caseSessionList where createdAt is not null
+        defaultCaseSessionFiltering("createdAt.specified=true", "createdAt.specified=false");
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseSessionsByCreatedAtIsGreaterThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedCaseSession = caseSessionRepository.saveAndFlush(caseSession);
+
+        // Get all the caseSessionList where createdAt is greater than or equal to
+        defaultCaseSessionFiltering(
+            "createdAt.greaterThanOrEqual=" + DEFAULT_CREATED_AT,
+            "createdAt.greaterThanOrEqual=" + UPDATED_CREATED_AT
+        );
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseSessionsByCreatedAtIsLessThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedCaseSession = caseSessionRepository.saveAndFlush(caseSession);
+
+        // Get all the caseSessionList where createdAt is less than or equal to
+        defaultCaseSessionFiltering("createdAt.lessThanOrEqual=" + DEFAULT_CREATED_AT, "createdAt.lessThanOrEqual=" + SMALLER_CREATED_AT);
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseSessionsByCreatedAtIsLessThanSomething() throws Exception {
+        // Initialize the database
+        insertedCaseSession = caseSessionRepository.saveAndFlush(caseSession);
+
+        // Get all the caseSessionList where createdAt is less than
+        defaultCaseSessionFiltering("createdAt.lessThan=" + UPDATED_CREATED_AT, "createdAt.lessThan=" + DEFAULT_CREATED_AT);
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseSessionsByCreatedAtIsGreaterThanSomething() throws Exception {
+        // Initialize the database
+        insertedCaseSession = caseSessionRepository.saveAndFlush(caseSession);
+
+        // Get all the caseSessionList where createdAt is greater than
+        defaultCaseSessionFiltering("createdAt.greaterThan=" + SMALLER_CREATED_AT, "createdAt.greaterThan=" + DEFAULT_CREATED_AT);
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseSessionsByUpdatedAtIsEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedCaseSession = caseSessionRepository.saveAndFlush(caseSession);
+
+        // Get all the caseSessionList where updatedAt equals to
+        defaultCaseSessionFiltering("updatedAt.equals=" + DEFAULT_UPDATED_AT, "updatedAt.equals=" + UPDATED_UPDATED_AT);
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseSessionsByUpdatedAtIsInShouldWork() throws Exception {
+        // Initialize the database
+        insertedCaseSession = caseSessionRepository.saveAndFlush(caseSession);
+
+        // Get all the caseSessionList where updatedAt in
+        defaultCaseSessionFiltering("updatedAt.in=" + DEFAULT_UPDATED_AT + "," + UPDATED_UPDATED_AT, "updatedAt.in=" + UPDATED_UPDATED_AT);
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseSessionsByUpdatedAtIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        insertedCaseSession = caseSessionRepository.saveAndFlush(caseSession);
+
+        // Get all the caseSessionList where updatedAt is not null
+        defaultCaseSessionFiltering("updatedAt.specified=true", "updatedAt.specified=false");
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseSessionsByUpdatedAtIsGreaterThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedCaseSession = caseSessionRepository.saveAndFlush(caseSession);
+
+        // Get all the caseSessionList where updatedAt is greater than or equal to
+        defaultCaseSessionFiltering(
+            "updatedAt.greaterThanOrEqual=" + DEFAULT_UPDATED_AT,
+            "updatedAt.greaterThanOrEqual=" + UPDATED_UPDATED_AT
+        );
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseSessionsByUpdatedAtIsLessThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedCaseSession = caseSessionRepository.saveAndFlush(caseSession);
+
+        // Get all the caseSessionList where updatedAt is less than or equal to
+        defaultCaseSessionFiltering("updatedAt.lessThanOrEqual=" + DEFAULT_UPDATED_AT, "updatedAt.lessThanOrEqual=" + SMALLER_UPDATED_AT);
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseSessionsByUpdatedAtIsLessThanSomething() throws Exception {
+        // Initialize the database
+        insertedCaseSession = caseSessionRepository.saveAndFlush(caseSession);
+
+        // Get all the caseSessionList where updatedAt is less than
+        defaultCaseSessionFiltering("updatedAt.lessThan=" + UPDATED_UPDATED_AT, "updatedAt.lessThan=" + DEFAULT_UPDATED_AT);
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseSessionsByUpdatedAtIsGreaterThanSomething() throws Exception {
+        // Initialize the database
+        insertedCaseSession = caseSessionRepository.saveAndFlush(caseSession);
+
+        // Get all the caseSessionList where updatedAt is greater than
+        defaultCaseSessionFiltering("updatedAt.greaterThan=" + SMALLER_UPDATED_AT, "updatedAt.greaterThan=" + DEFAULT_UPDATED_AT);
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseSessionsByCourtCaseIsEqualToSomething() throws Exception {
+        CourtCase courtCase;
+        if (TestUtil.findAll(em, CourtCase.class).isEmpty()) {
+            caseSessionRepository.saveAndFlush(caseSession);
+            courtCase = CourtCaseResourceIT.createEntity(em);
+        } else {
+            courtCase = TestUtil.findAll(em, CourtCase.class).get(0);
+        }
+        em.persist(courtCase);
+        em.flush();
+        caseSession.setCourtCase(courtCase);
+        caseSessionRepository.saveAndFlush(caseSession);
+        Long courtCaseId = courtCase.getId();
+        // Get all the caseSessionList where courtCase equals to courtCaseId
+        defaultCaseSessionShouldBeFound("courtCaseId.equals=" + courtCaseId);
+
+        // Get all the caseSessionList where courtCase equals to (courtCaseId + 1)
+        defaultCaseSessionShouldNotBeFound("courtCaseId.equals=" + (courtCaseId + 1));
+    }
+
+    private void defaultCaseSessionFiltering(String shouldBeFound, String shouldNotBeFound) throws Exception {
+        defaultCaseSessionShouldBeFound(shouldBeFound);
+        defaultCaseSessionShouldNotBeFound(shouldNotBeFound);
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is returned.
+     */
+    private void defaultCaseSessionShouldBeFound(String filter) throws Exception {
+        restCaseSessionMockMvc
+            .perform(get(ENTITY_API_URL + "?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(caseSession.getId().intValue())))
+            .andExpect(jsonPath("$.[*].sessionDate").value(hasItem(DEFAULT_SESSION_DATE.toString())))
+            .andExpect(jsonPath("$.[*].sessionTime").value(hasItem(sameInstant(DEFAULT_SESSION_TIME))))
+            .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION)))
+            .andExpect(jsonPath("$.[*].notes").value(hasItem(DEFAULT_NOTES)))
+            .andExpect(jsonPath("$.[*].createdAt").value(hasItem(sameInstant(DEFAULT_CREATED_AT))))
+            .andExpect(jsonPath("$.[*].updatedAt").value(hasItem(sameInstant(DEFAULT_UPDATED_AT))));
+
+        // Check, that the count call also returns 1
+        restCaseSessionMockMvc
+            .perform(get(ENTITY_API_URL + "/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(content().string("1"));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is not returned.
+     */
+    private void defaultCaseSessionShouldNotBeFound(String filter) throws Exception {
+        restCaseSessionMockMvc
+            .perform(get(ENTITY_API_URL + "?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(jsonPath("$").isArray())
+            .andExpect(jsonPath("$").isEmpty());
+
+        // Check, that the count call also returns 0
+        restCaseSessionMockMvc
+            .perform(get(ENTITY_API_URL + "/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(content().string("0"));
     }
 
     @Test

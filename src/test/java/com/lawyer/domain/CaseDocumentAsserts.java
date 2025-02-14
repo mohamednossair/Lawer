@@ -50,8 +50,12 @@ public class CaseDocumentAsserts {
             .as("Verify CaseDocument relevant properties")
             .satisfies(e -> assertThat(e.getDocumentName()).as("check documentName").isEqualTo(actual.getDocumentName()))
             .satisfies(e -> assertThat(e.getDocumentType()).as("check documentType").isEqualTo(actual.getDocumentType()))
-            .satisfies(e -> assertThat(e.getFilePath()).as("check filePath").isEqualTo(actual.getFilePath()))
-            .satisfies(e -> assertThat(e.getUploadedBy()).as("check uploadedBy").isEqualTo(actual.getUploadedBy()))
+            .satisfies(e -> assertThat(e.getDocumentFile()).as("check documentFile").isEqualTo(actual.getDocumentFile()))
+            .satisfies(e ->
+                assertThat(e.getDocumentFileContentType())
+                    .as("check documentFile contenty type")
+                    .isEqualTo(actual.getDocumentFileContentType())
+            )
             .satisfies(e ->
                 assertThat(e.getCreatedAt())
                     .as("check createdAt")

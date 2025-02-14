@@ -77,15 +77,12 @@ public class CaseDocumentService {
     }
 
     /**
-     * Get all the caseDocuments.
+     * Get all the caseDocuments with eager load of many-to-many relationships.
      *
-     * @param pageable the pagination information.
      * @return the list of entities.
      */
-    @Transactional(readOnly = true)
-    public Page<CaseDocumentDTO> findAll(Pageable pageable) {
-        LOG.debug("Request to get all CaseDocuments");
-        return caseDocumentRepository.findAll(pageable).map(caseDocumentMapper::toDto);
+    public Page<CaseDocumentDTO> findAllWithEagerRelationships(Pageable pageable) {
+        return caseDocumentRepository.findAllWithEagerRelationships(pageable).map(caseDocumentMapper::toDto);
     }
 
     /**
@@ -97,7 +94,7 @@ public class CaseDocumentService {
     @Transactional(readOnly = true)
     public Optional<CaseDocumentDTO> findOne(Long id) {
         LOG.debug("Request to get CaseDocument : {}", id);
-        return caseDocumentRepository.findById(id).map(caseDocumentMapper::toDto);
+        return caseDocumentRepository.findOneWithEagerRelationships(id).map(caseDocumentMapper::toDto);
     }
 
     /**

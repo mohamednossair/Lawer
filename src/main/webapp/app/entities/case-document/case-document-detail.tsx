@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Button, Col, Row } from 'reactstrap';
-import { TextFormat, Translate } from 'react-jhipster';
+import { TextFormat, Translate, byteSize, openFile } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { APP_DATE_FORMAT } from 'app/config/constants';
@@ -45,17 +45,24 @@ export const CaseDocumentDetail = () => {
           </dt>
           <dd>{caseDocumentEntity.documentType}</dd>
           <dt>
-            <span id="filePath">
-              <Translate contentKey="lawyerApp.caseDocument.filePath">File Path</Translate>
+            <span id="documentFile">
+              <Translate contentKey="lawyerApp.caseDocument.documentFile">Document File</Translate>
             </span>
           </dt>
-          <dd>{caseDocumentEntity.filePath}</dd>
-          <dt>
-            <span id="uploadedBy">
-              <Translate contentKey="lawyerApp.caseDocument.uploadedBy">Uploaded By</Translate>
-            </span>
-          </dt>
-          <dd>{caseDocumentEntity.uploadedBy}</dd>
+          <dd>
+            {caseDocumentEntity.documentFile ? (
+              <div>
+                {caseDocumentEntity.documentFileContentType ? (
+                  <a onClick={openFile(caseDocumentEntity.documentFileContentType, caseDocumentEntity.documentFile)}>
+                    <Translate contentKey="entity.action.open">Open</Translate>&nbsp;
+                  </a>
+                ) : null}
+                <span>
+                  {caseDocumentEntity.documentFileContentType}, {byteSize(caseDocumentEntity.documentFile)}
+                </span>
+              </div>
+            ) : null}
+          </dd>
           <dt>
             <span id="createdAt">
               <Translate contentKey="lawyerApp.caseDocument.createdAt">Created At</Translate>
@@ -75,11 +82,11 @@ export const CaseDocumentDetail = () => {
           <dt>
             <Translate contentKey="lawyerApp.caseDocument.courtCase">Court Case</Translate>
           </dt>
-          <dd>{caseDocumentEntity.courtCase ? caseDocumentEntity.courtCase.id : ''}</dd>
+          <dd>{caseDocumentEntity.courtCase ? caseDocumentEntity.courtCase.caseNumber : ''}</dd>
           <dt>
             <Translate contentKey="lawyerApp.caseDocument.user">User</Translate>
           </dt>
-          <dd>{caseDocumentEntity.user ? caseDocumentEntity.user.id : ''}</dd>
+          <dd>{caseDocumentEntity.user ? caseDocumentEntity.user.login : ''}</dd>
         </dl>
         <Button tag={Link} to="/case-document" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" />{' '}

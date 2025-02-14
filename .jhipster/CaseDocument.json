@@ -13,17 +13,13 @@
     {
       "fieldName": "documentType",
       "fieldType": "String",
-      "fieldValidateRules": ["required"]
-    },
-    {
-      "fieldName": "filePath",
-      "fieldType": "String",
-      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRules": ["required", "maxlength"],
       "fieldValidateRulesMaxlength": "4000"
     },
     {
-      "fieldName": "uploadedBy",
-      "fieldType": "Integer"
+      "fieldName": "documentFile",
+      "fieldType": "Blob",
+      "fieldValidateRules": ["required"]
     },
     {
       "fieldName": "createdAt",
@@ -34,16 +30,19 @@
       "fieldType": "ZonedDateTime"
     }
   ],
+  "jpaMetamodelFiltering": true,
   "name": "CaseDocument",
   "pagination": "pagination",
   "relationships": [
     {
+      "otherEntityField": "caseNumber",
       "otherEntityName": "courtCase",
       "relationshipName": "courtCase",
       "relationshipSide": "left",
       "relationshipType": "many-to-one"
     },
     {
+      "otherEntityField": "login",
       "otherEntityName": "user",
       "relationshipName": "user",
       "relationshipSide": "left",

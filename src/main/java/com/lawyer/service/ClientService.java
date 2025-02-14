@@ -4,10 +4,7 @@ import com.lawyer.domain.Client;
 import com.lawyer.repository.ClientRepository;
 import com.lawyer.service.dto.ClientDTO;
 import com.lawyer.service.mapper.ClientMapper;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -75,17 +72,6 @@ public class ClientService {
             })
             .map(clientRepository::save)
             .map(clientMapper::toDto);
-    }
-
-    /**
-     * Get all the clients.
-     *
-     * @return the list of entities.
-     */
-    @Transactional(readOnly = true)
-    public List<ClientDTO> findAll() {
-        LOG.debug("Request to get all Clients");
-        return clientRepository.findAll().stream().map(clientMapper::toDto).collect(Collectors.toCollection(LinkedList::new));
     }
 
     /**
