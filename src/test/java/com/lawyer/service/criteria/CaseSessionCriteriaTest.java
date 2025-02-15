@@ -82,6 +82,7 @@ class CaseSessionCriteriaTest {
         caseSessionCriteria.notes();
         caseSessionCriteria.createdAt();
         caseSessionCriteria.updatedAt();
+        caseSessionCriteria.clientId();
         caseSessionCriteria.courtCaseId();
         caseSessionCriteria.distinct();
     }
@@ -96,6 +97,7 @@ class CaseSessionCriteriaTest {
                 condition.apply(criteria.getNotes()) &&
                 condition.apply(criteria.getCreatedAt()) &&
                 condition.apply(criteria.getUpdatedAt()) &&
+                condition.apply(criteria.getClientId()) &&
                 condition.apply(criteria.getCourtCaseId()) &&
                 condition.apply(criteria.getDistinct()),
             "every filter matches"
@@ -112,6 +114,7 @@ class CaseSessionCriteriaTest {
                 condition.apply(criteria.getNotes(), copy.getNotes()) &&
                 condition.apply(criteria.getCreatedAt(), copy.getCreatedAt()) &&
                 condition.apply(criteria.getUpdatedAt(), copy.getUpdatedAt()) &&
+                condition.apply(criteria.getClientId(), copy.getClientId()) &&
                 condition.apply(criteria.getCourtCaseId(), copy.getCourtCaseId()) &&
                 condition.apply(criteria.getDistinct(), copy.getDistinct()),
             "every filter matches"

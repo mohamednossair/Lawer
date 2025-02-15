@@ -46,7 +46,12 @@ public class CaseSession implements Serializable {
     @Column(name = "updated_at")
     private ZonedDateTime updatedAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
+    @NotNull
+    private Client client;
+
+    @ManyToOne(optional = false)
+    @NotNull
     @JsonIgnoreProperties(value = { "court", "client", "courtCaseType", "caseStatus", "opponentLawyerId" }, allowSetters = true)
     private CourtCase courtCase;
 
@@ -141,6 +146,19 @@ public class CaseSession implements Serializable {
 
     public void setUpdatedAt(ZonedDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Client getClient() {
+        return this.client;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
+    }
+
+    public CaseSession client(Client client) {
+        this.setClient(client);
+        return this;
     }
 
     public CourtCase getCourtCase() {

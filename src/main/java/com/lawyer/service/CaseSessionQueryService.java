@@ -95,6 +95,11 @@ public class CaseSessionQueryService extends QueryService<CaseSession> {
             if (criteria.getUpdatedAt() != null) {
                 specification = specification.and(buildRangeSpecification(criteria.getUpdatedAt(), CaseSession_.updatedAt));
             }
+            if (criteria.getClientId() != null) {
+                specification = specification.and(
+                    buildSpecification(criteria.getClientId(), root -> root.join(CaseSession_.client, JoinType.LEFT).get(Client_.id))
+                );
+            }
             if (criteria.getCourtCaseId() != null) {
                 specification = specification.and(
                     buildSpecification(criteria.getCourtCaseId(), root ->

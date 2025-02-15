@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import { IClient } from 'app/shared/model/client.model';
 import { ICourtCase } from 'app/shared/model/court-case.model';
 
 export interface ICaseSession {
@@ -9,7 +10,8 @@ export interface ICaseSession {
   notes?: string | null;
   createdAt?: dayjs.Dayjs | null;
   updatedAt?: dayjs.Dayjs | null;
-  courtCase?: ICourtCase | null;
+  client?: IClient;
+  courtCase?: ICourtCase;
 }
 
 export const defaultValue: Readonly<ICaseSession> = {};

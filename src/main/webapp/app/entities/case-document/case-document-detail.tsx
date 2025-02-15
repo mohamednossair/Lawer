@@ -80,6 +80,10 @@ export const CaseDocumentDetail = () => {
             {caseDocumentEntity.updatedAt ? <TextFormat value={caseDocumentEntity.updatedAt} type="date" format={APP_DATE_FORMAT} /> : null}
           </dd>
           <dt>
+            <Translate contentKey="lawyerApp.caseDocument.client">Client</Translate>
+          </dt>
+          <dd>{caseDocumentEntity.client ? caseDocumentEntity.client.clientName : ''}</dd>
+          <dt>
             <Translate contentKey="lawyerApp.caseDocument.courtCase">Court Case</Translate>
           </dt>
           <dd>{caseDocumentEntity.courtCase ? caseDocumentEntity.courtCase.caseNumber : ''}</dd>

@@ -27,14 +27,16 @@ public interface CaseSessionRepository extends JpaRepository<CaseSession, Long>,
     }
 
     @Query(
-        value = "select caseSession from CaseSession caseSession left join fetch caseSession.courtCase",
+        value = "select caseSession from CaseSession caseSession left join fetch caseSession.client left join fetch caseSession.courtCase",
         countQuery = "select count(caseSession) from CaseSession caseSession"
     )
     Page<CaseSession> findAllWithToOneRelationships(Pageable pageable);
 
-    @Query("select caseSession from CaseSession caseSession left join fetch caseSession.courtCase")
+    @Query("select caseSession from CaseSession caseSession left join fetch caseSession.client left join fetch caseSession.courtCase")
     List<CaseSession> findAllWithToOneRelationships();
 
-    @Query("select caseSession from CaseSession caseSession left join fetch caseSession.courtCase where caseSession.id =:id")
+    @Query(
+        "select caseSession from CaseSession caseSession left join fetch caseSession.client left join fetch caseSession.courtCase where caseSession.id =:id"
+    )
     Optional<CaseSession> findOneWithToOneRelationships(@Param("id") Long id);
 }

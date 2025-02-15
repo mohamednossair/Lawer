@@ -1,12 +1,13 @@
 import React, { useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Button, Col, Row } from 'reactstrap';
+import { Button, Col, FormText, Row } from 'reactstrap';
 import { Translate, ValidatedField, ValidatedForm, translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
+import { getEntities as getClients } from 'app/entities/client/client.reducer';
 import { getEntities as getCourtCases } from 'app/entities/court-case/court-case.reducer';
 import { createEntity, getEntity, reset, updateEntity } from './case-session.reducer';
 
@@ -18,6 +19,7 @@ export const CaseSessionUpdate = () => {
   const { id } = useParams<'id'>();
   const isNew = id === undefined;
 
+  const clients = useAppSelector(state => state.client.entities);
   const courtCases = useAppSelector(state => state.courtCase.entities);
   const caseSessionEntity = useAppSelector(state => state.caseSession.entity);
   const loading = useAppSelector(state => state.caseSession.loading);
@@ -35,6 +37,7 @@ export const CaseSessionUpdate = () => {
       dispatch(getEntity(id));
     }
 
+    dispatch(getClients({}));
     dispatch(getCourtCases({}));
   }, []);
 
@@ -55,6 +58,7 @@ export const CaseSessionUpdate = () => {
     const entity = {
       ...caseSessionEntity,
       ...values,
+      client: clients.find(it => it.id.toString() === values.client?.toString()),
       courtCase: courtCases.find(it => it.id.toString() === values.courtCase?.toString()),
     };
 
@@ -77,6 +81,7 @@ export const CaseSessionUpdate = () => {
           sessionTime: convertDateTimeFromServer(caseSessionEntity.sessionTime),
           createdAt: convertDateTimeFromServer(caseSessionEntity.createdAt),
           updatedAt: convertDateTimeFromServer(caseSessionEntity.updatedAt),
+          client: caseSessionEntity?.client?.id,
           courtCase: caseSessionEntity?.courtCase?.id,
         };
 
@@ -160,11 +165,32 @@ export const CaseSessionUpdate = () => {
                 placeholder="YYYY-MM-DD HH:mm"
               />
               <ValidatedField
+                id="case-session-client"
+                name="client"
+                data-cy="client"
+                label={translate('lawyerApp.caseSession.client')}
+                type="select"
+                required
+              >
+                <option value="" key="0" />
+                {clients
+                  ? clients.map(otherEntity => (
+                      <option value={otherEntity.id} key={otherEntity.id}>
+                        {otherEntity.clientName}
+                      </option>
+                    ))
+                  : null}
+              </ValidatedField>
+              <FormText>
+                <Translate contentKey="entity.validation.required">This field is required.</Translate>
+              </FormText>
+              <ValidatedField
                 id="case-session-courtCase"
                 name="courtCase"
                 data-cy="courtCase"
                 label={translate('lawyerApp.caseSession.courtCase')}
                 type="select"
+                required
               >
                 <option value="" key="0" />
                 {courtCases
@@ -175,6 +201,9 @@ export const CaseSessionUpdate = () => {
                     ))
                   : null}
               </ValidatedField>
+              <FormText>
+                <Translate contentKey="entity.validation.required">This field is required.</Translate>
+              </FormText>
               <Button tag={Link} id="cancel-save" data-cy="entityCreateCancelButton" to="/case-session" replace color="info">
                 <FontAwesomeIcon icon="arrow-left" />
                 &nbsp;

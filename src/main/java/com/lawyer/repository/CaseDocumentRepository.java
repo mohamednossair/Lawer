@@ -30,16 +30,18 @@ public interface CaseDocumentRepository extends JpaRepository<CaseDocument, Long
     }
 
     @Query(
-        value = "select caseDocument from CaseDocument caseDocument left join fetch caseDocument.courtCase left join fetch caseDocument.user",
+        value = "select caseDocument from CaseDocument caseDocument left join fetch caseDocument.client left join fetch caseDocument.courtCase left join fetch caseDocument.user",
         countQuery = "select count(caseDocument) from CaseDocument caseDocument"
     )
     Page<CaseDocument> findAllWithToOneRelationships(Pageable pageable);
 
-    @Query("select caseDocument from CaseDocument caseDocument left join fetch caseDocument.courtCase left join fetch caseDocument.user")
+    @Query(
+        "select caseDocument from CaseDocument caseDocument left join fetch caseDocument.client left join fetch caseDocument.courtCase left join fetch caseDocument.user"
+    )
     List<CaseDocument> findAllWithToOneRelationships();
 
     @Query(
-        "select caseDocument from CaseDocument caseDocument left join fetch caseDocument.courtCase left join fetch caseDocument.user where caseDocument.id =:id"
+        "select caseDocument from CaseDocument caseDocument left join fetch caseDocument.client left join fetch caseDocument.courtCase left join fetch caseDocument.user where caseDocument.id =:id"
     )
     Optional<CaseDocument> findOneWithToOneRelationships(@Param("id") Long id);
 }

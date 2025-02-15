@@ -30,6 +30,10 @@ public class CaseDocumentDTO implements Serializable {
 
     private ZonedDateTime updatedAt;
 
+    @NotNull
+    private ClientDTO client;
+
+    @NotNull
     private CourtCaseDTO courtCase;
 
     private UserDTO user;
@@ -90,6 +94,14 @@ public class CaseDocumentDTO implements Serializable {
         this.updatedAt = updatedAt;
     }
 
+    public ClientDTO getClient() {
+        return client;
+    }
+
+    public void setClient(ClientDTO client) {
+        this.client = client;
+    }
+
     public CourtCaseDTO getCourtCase() {
         return courtCase;
     }
@@ -137,6 +149,7 @@ public class CaseDocumentDTO implements Serializable {
             ", documentFile='" + getDocumentFile() + "'" +
             ", createdAt='" + getCreatedAt() + "'" +
             ", updatedAt='" + getUpdatedAt() + "'" +
+            ", client=" + getClient() +
             ", courtCase=" + getCourtCase() +
             ", user=" + getUser() +
             "}";

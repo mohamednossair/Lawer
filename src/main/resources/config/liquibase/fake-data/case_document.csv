@@ -1,11 +1,11 @@
-id;document_name;document_type;document_file;document_file_content_type;created_at;updated_at
-1;submissive;geez opposite blah;../fake-data/blob/hipster.png;image/png;2025-01-30T18:25:32;2025-01-30T06:08:37
-2;that service;scary than;../fake-data/blob/hipster.png;image/png;2025-01-30T03:18:48;2025-01-30T01:26:03
-3;emotional incidentally narrate;black-and-white before;../fake-data/blob/hipster.png;image/png;2025-01-30T19:39:47;2025-01-30T12:08:25
-4;boo pave;boohoo doodle;../fake-data/blob/hipster.png;image/png;2025-01-30T07:53:02;2025-01-30T20:21:23
-5;against;what provided mystify;../fake-data/blob/hipster.png;image/png;2025-01-30T03:07:46;2025-01-30T20:34:19
-6;low worth contractor;handover blah which;../fake-data/blob/hipster.png;image/png;2025-01-30T00:20:32;2025-01-30T10:25:28
-7;eek tenant generally;outfox;../fake-data/blob/hipster.png;image/png;2025-01-30T02:07:46;2025-01-30T12:50:05
-8;yowza harmful violently;even;../fake-data/blob/hipster.png;image/png;2025-01-30T11:45:41;2025-01-29T21:34:45
-9;quarrelsomely boo;whether to;../fake-data/blob/hipster.png;image/png;2025-01-30T19:09:11;2025-01-30T04:54:00
-10;a seriously bell;midst where essential;../fake-data/blob/hipster.png;image/png;2025-01-30T14:35:57;2025-01-30T14:01:50
+id;document_name;document_type;document_file;document_file_content_type;created_at;updated_at;client_id;court_case_id
+1;submissive;geez opposite blah;../fake-data/blob/hipster.png;image/png;2025-01-30T18:25:32;2025-01-30T06:08:37;1;1
+2;that service;scary than;../fake-data/blob/hipster.png;image/png;2025-01-30T03:18:48;2025-01-30T01:26:03;2;2
+3;emotional incidentally narrate;black-and-white before;../fake-data/blob/hipster.png;image/png;2025-01-30T19:39:47;2025-01-30T12:08:25;3;3
+4;boo pave;boohoo doodle;../fake-data/blob/hipster.png;image/png;2025-01-30T07:53:02;2025-01-30T20:21:23;4;4
+5;against;what provided mystify;../fake-data/blob/hipster.png;image/png;2025-01-30T03:07:46;2025-01-30T20:34:19;5;5
+6;low worth contractor;handover blah which;../fake-data/blob/hipster.png;image/png;2025-01-30T00:20:32;2025-01-30T10:25:28;6;6
+7;eek tenant generally;outfox;../fake-data/blob/hipster.png;image/png;2025-01-30T02:07:46;2025-01-30T12:50:05;7;7
+8;yowza harmful violently;even;../fake-data/blob/hipster.png;image/png;2025-01-30T11:45:41;2025-01-29T21:34:45;8;8
+9;quarrelsomely boo;whether to;../fake-data/blob/hipster.png;image/png;2025-01-30T19:09:11;2025-01-30T04:54:00;9;9
+10;a seriously bell;midst where essential;../fake-data/blob/hipster.png;image/png;2025-01-30T14:35:57;2025-01-30T14:01:50;10;10

@@ -1,6 +1,7 @@
 package com.lawyer.domain;
 
 import static com.lawyer.domain.CaseDocumentTestSamples.*;
+import static com.lawyer.domain.ClientTestSamples.*;
 import static com.lawyer.domain.CourtCaseTestSamples.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -21,6 +22,18 @@ class CaseDocumentTest {
 
         caseDocument2 = getCaseDocumentSample2();
         assertThat(caseDocument1).isNotEqualTo(caseDocument2);
+    }
+
+    @Test
+    void clientTest() {
+        CaseDocument caseDocument = getCaseDocumentRandomSampleGenerator();
+        Client clientBack = getClientRandomSampleGenerator();
+
+        caseDocument.setClient(clientBack);
+        assertThat(caseDocument.getClient()).isEqualTo(clientBack);
+
+        caseDocument.client(null);
+        assertThat(caseDocument.getClient()).isNull();
     }
 
     @Test

@@ -23,6 +23,7 @@
       "documentFile": "Document File",
       "createdAt": "Created At",
       "updatedAt": "Updated At",
+      "client": "Client",
       "courtCase": "Court Case",
       "user": "User"
     }

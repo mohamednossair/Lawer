@@ -12,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lawyer.IntegrationTest;
 import com.lawyer.domain.CaseSession;
+import com.lawyer.domain.Client;
 import com.lawyer.domain.CourtCase;
 import com.lawyer.repository.CaseSessionRepository;
 import com.lawyer.service.CaseSessionService;
@@ -109,14 +110,35 @@ class CaseSessionResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static CaseSession createEntity() {
-        return new CaseSession()
+    public static CaseSession createEntity(EntityManager em) {
+        CaseSession caseSession = new CaseSession()
             .sessionDate(DEFAULT_SESSION_DATE)
             .sessionTime(DEFAULT_SESSION_TIME)
             .description(DEFAULT_DESCRIPTION)
             .notes(DEFAULT_NOTES)
             .createdAt(DEFAULT_CREATED_AT)
             .updatedAt(DEFAULT_UPDATED_AT);
+        // Add required entity
+        Client client;
+        if (TestUtil.findAll(em, Client.class).isEmpty()) {
+            client = ClientResourceIT.createEntity();
+            em.persist(client);
+            em.flush();
+        } else {
+            client = TestUtil.findAll(em, Client.class).get(0);
+        }
+        caseSession.setClient(client);
+        // Add required entity
+        CourtCase courtCase;
+        if (TestUtil.findAll(em, CourtCase.class).isEmpty()) {
+            courtCase = CourtCaseResourceIT.createEntity(em);
+            em.persist(courtCase);
+            em.flush();
+        } else {
+            courtCase = TestUtil.findAll(em, CourtCase.class).get(0);
+        }
+        caseSession.setCourtCase(courtCase);
+        return caseSession;
     }
 
     /**
@@ -125,19 +147,40 @@ class CaseSessionResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static CaseSession createUpdatedEntity() {
-        return new CaseSession()
+    public static CaseSession createUpdatedEntity(EntityManager em) {
+        CaseSession updatedCaseSession = new CaseSession()
             .sessionDate(UPDATED_SESSION_DATE)
             .sessionTime(UPDATED_SESSION_TIME)
             .description(UPDATED_DESCRIPTION)
             .notes(UPDATED_NOTES)
             .createdAt(UPDATED_CREATED_AT)
             .updatedAt(UPDATED_UPDATED_AT);
+        // Add required entity
+        Client client;
+        if (TestUtil.findAll(em, Client.class).isEmpty()) {
+            client = ClientResourceIT.createUpdatedEntity();
+            em.persist(client);
+            em.flush();
+        } else {
+            client = TestUtil.findAll(em, Client.class).get(0);
+        }
+        updatedCaseSession.setClient(client);
+        // Add required entity
+        CourtCase courtCase;
+        if (TestUtil.findAll(em, CourtCase.class).isEmpty()) {
+            courtCase = CourtCaseResourceIT.createUpdatedEntity(em);
+            em.persist(courtCase);
+            em.flush();
+        } else {
+            courtCase = TestUtil.findAll(em, CourtCase.class).get(0);
+        }
+        updatedCaseSession.setCourtCase(courtCase);
+        return updatedCaseSession;
     }
 
     @BeforeEach
     public void initTest() {
-        caseSession = createEntity();
+        caseSession = createEntity(em);
     }
 
     @AfterEach
@@ -687,6 +730,28 @@ class CaseSessionResourceIT {
 
         // Get all the caseSessionList where updatedAt is greater than
         defaultCaseSessionFiltering("updatedAt.greaterThan=" + SMALLER_UPDATED_AT, "updatedAt.greaterThan=" + DEFAULT_UPDATED_AT);
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseSessionsByClientIsEqualToSomething() throws Exception {
+        Client client;
+        if (TestUtil.findAll(em, Client.class).isEmpty()) {
+            caseSessionRepository.saveAndFlush(caseSession);
+            client = ClientResourceIT.createEntity();
+        } else {
+            client = TestUtil.findAll(em, Client.class).get(0);
+        }
+        em.persist(client);
+        em.flush();
+        caseSession.setClient(client);
+        caseSessionRepository.saveAndFlush(caseSession);
+        Long clientId = client.getId();
+        // Get all the caseSessionList where client equals to clientId
+        defaultCaseSessionShouldBeFound("clientId.equals=" + clientId);
+
+        // Get all the caseSessionList where client equals to (clientId + 1)
+        defaultCaseSessionShouldNotBeFound("clientId.equals=" + (clientId + 1));
     }
 
     @Test

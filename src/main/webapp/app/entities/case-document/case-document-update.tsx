@@ -1,12 +1,13 @@
 import React, { useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Button, Col, Row } from 'reactstrap';
+import { Button, Col, FormText, Row } from 'reactstrap';
 import { Translate, ValidatedBlobField, ValidatedField, ValidatedForm, translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
+import { getEntities as getClients } from 'app/entities/client/client.reducer';
 import { getEntities as getCourtCases } from 'app/entities/court-case/court-case.reducer';
 import { getUsers } from 'app/modules/administration/user-management/user-management.reducer';
 import { createEntity, getEntity, reset, updateEntity } from './case-document.reducer';
@@ -19,6 +20,7 @@ export const CaseDocumentUpdate = () => {
   const { id } = useParams<'id'>();
   const isNew = id === undefined;
 
+  const clients = useAppSelector(state => state.client.entities);
   const courtCases = useAppSelector(state => state.courtCase.entities);
   const users = useAppSelector(state => state.userManagement.users);
   const caseDocumentEntity = useAppSelector(state => state.caseDocument.entity);
@@ -37,6 +39,7 @@ export const CaseDocumentUpdate = () => {
       dispatch(getEntity(id));
     }
 
+    dispatch(getClients({}));
     dispatch(getCourtCases({}));
     dispatch(getUsers({}));
   }, []);
@@ -57,6 +60,7 @@ export const CaseDocumentUpdate = () => {
     const entity = {
       ...caseDocumentEntity,
       ...values,
+      client: clients.find(it => it.id.toString() === values.client?.toString()),
       courtCase: courtCases.find(it => it.id.toString() === values.courtCase?.toString()),
       user: users.find(it => it.id.toString() === values.user?.toString()),
     };
@@ -78,6 +82,7 @@ export const CaseDocumentUpdate = () => {
           ...caseDocumentEntity,
           createdAt: convertDateTimeFromServer(caseDocumentEntity.createdAt),
           updatedAt: convertDateTimeFromServer(caseDocumentEntity.updatedAt),
+          client: caseDocumentEntity?.client?.id,
           courtCase: caseDocumentEntity?.courtCase?.id,
           user: caseDocumentEntity?.user?.id,
         };
@@ -155,11 +160,32 @@ export const CaseDocumentUpdate = () => {
                 placeholder="YYYY-MM-DD HH:mm"
               />
               <ValidatedField
+                id="case-document-client"
+                name="client"
+                data-cy="client"
+                label={translate('lawyerApp.caseDocument.client')}
+                type="select"
+                required
+              >
+                <option value="" key="0" />
+                {clients
+                  ? clients.map(otherEntity => (
+                      <option value={otherEntity.id} key={otherEntity.id}>
+                        {otherEntity.clientName}
+                      </option>
+                    ))
+                  : null}
+              </ValidatedField>
+              <FormText>
+                <Translate contentKey="entity.validation.required">This field is required.</Translate>
+              </FormText>
+              <ValidatedField
                 id="case-document-courtCase"
                 name="courtCase"
                 data-cy="courtCase"
                 label={translate('lawyerApp.caseDocument.courtCase')}
                 type="select"
+                required
               >
                 <option value="" key="0" />
                 {courtCases
@@ -170,6 +196,9 @@ export const CaseDocumentUpdate = () => {
                     ))
                   : null}
               </ValidatedField>
+              <FormText>
+                <Translate contentKey="entity.validation.required">This field is required.</Translate>
+              </FormText>
               <ValidatedField
                 id="case-document-user"
                 name="user"

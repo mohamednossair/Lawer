@@ -18,7 +18,7 @@
     "gitCompany": "",
     "iaCTools": ["bicep", "terraform"],
     "jhiPrefix": "jhi",
-    "jhipsterVersion": "8.8.0",
+    "jhipsterVersion": "8.9.0",
     "jwtSecretKey": "ZmI4MGI4M2RmNDE5ZmE1Zjg2OTdiZmY4ZGI3MDJjZmE0NDQ2YTIzYTZiMTdhNWMzMDExNzZjYWQyMWZhMTQ5Nzg1ZWY1ZjE1YjI2ZDkwNzExNzUxZmRhM2E5NzM3ZDVhNTVhMjQ1YjNjMDU2YTYwZTZkZmQwMjdkZWEyN2E3ODI=",
     "languages": ["ar-ly", "en"],
     "lastLiquibaseTimestamp": 1738272045000,

@@ -138,6 +138,9 @@ export const CaseSession = () => {
                   <FontAwesomeIcon icon={getSortIconByFieldName('updatedAt')} />
                 </th>
                 <th>
+                  <Translate contentKey="lawyerApp.caseSession.client">Client</Translate> <FontAwesomeIcon icon="sort" />
+                </th>
+                <th>
                   <Translate contentKey="lawyerApp.caseSession.courtCase">Court Case</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
                 <th />
@@ -167,6 +170,7 @@ export const CaseSession = () => {
                   <td>
                     {caseSession.updatedAt ? <TextFormat type="date" value={caseSession.updatedAt} format={APP_DATE_FORMAT} /> : null}
                   </td>
+                  <td>{caseSession.client ? <Link to={`/client/${caseSession.client.id}`}>{caseSession.client.clientName}</Link> : ''}</td>
                   <td>
                     {caseSession.courtCase ? (
                       <Link to={`/court-case/${caseSession.courtCase.id}`}>{caseSession.courtCase.caseNumber}</Link>

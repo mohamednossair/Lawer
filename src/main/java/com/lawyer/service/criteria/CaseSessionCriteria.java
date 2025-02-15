@@ -36,6 +36,8 @@ public class CaseSessionCriteria implements Serializable, Criteria {
 
     private ZonedDateTimeFilter updatedAt;
 
+    private LongFilter clientId;
+
     private LongFilter courtCaseId;
 
     private Boolean distinct;
@@ -50,6 +52,7 @@ public class CaseSessionCriteria implements Serializable, Criteria {
         this.notes = other.optionalNotes().map(StringFilter::copy).orElse(null);
         this.createdAt = other.optionalCreatedAt().map(ZonedDateTimeFilter::copy).orElse(null);
         this.updatedAt = other.optionalUpdatedAt().map(ZonedDateTimeFilter::copy).orElse(null);
+        this.clientId = other.optionalClientId().map(LongFilter::copy).orElse(null);
         this.courtCaseId = other.optionalCourtCaseId().map(LongFilter::copy).orElse(null);
         this.distinct = other.distinct;
     }
@@ -192,6 +195,25 @@ public class CaseSessionCriteria implements Serializable, Criteria {
         this.updatedAt = updatedAt;
     }
 
+    public LongFilter getClientId() {
+        return clientId;
+    }
+
+    public Optional<LongFilter> optionalClientId() {
+        return Optional.ofNullable(clientId);
+    }
+
+    public LongFilter clientId() {
+        if (clientId == null) {
+            setClientId(new LongFilter());
+        }
+        return clientId;
+    }
+
+    public void setClientId(LongFilter clientId) {
+        this.clientId = clientId;
+    }
+
     public LongFilter getCourtCaseId() {
         return courtCaseId;
     }
@@ -247,6 +269,7 @@ public class CaseSessionCriteria implements Serializable, Criteria {
             Objects.equals(notes, that.notes) &&
             Objects.equals(createdAt, that.createdAt) &&
             Objects.equals(updatedAt, that.updatedAt) &&
+            Objects.equals(clientId, that.clientId) &&
             Objects.equals(courtCaseId, that.courtCaseId) &&
             Objects.equals(distinct, that.distinct)
         );
@@ -254,7 +277,7 @@ public class CaseSessionCriteria implements Serializable, Criteria {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, sessionDate, sessionTime, description, notes, createdAt, updatedAt, courtCaseId, distinct);
+        return Objects.hash(id, sessionDate, sessionTime, description, notes, createdAt, updatedAt, clientId, courtCaseId, distinct);
     }
 
     // prettier-ignore
@@ -268,6 +291,7 @@ public class CaseSessionCriteria implements Serializable, Criteria {
             optionalNotes().map(f -> "notes=" + f + ", ").orElse("") +
             optionalCreatedAt().map(f -> "createdAt=" + f + ", ").orElse("") +
             optionalUpdatedAt().map(f -> "updatedAt=" + f + ", ").orElse("") +
+            optionalClientId().map(f -> "clientId=" + f + ", ").orElse("") +
             optionalCourtCaseId().map(f -> "courtCaseId=" + f + ", ").orElse("") +
             optionalDistinct().map(f -> "distinct=" + f + ", ").orElse("") +
         "}";

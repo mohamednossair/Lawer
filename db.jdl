@@ -77,11 +77,14 @@ relationship ManyToOne {
 }
 
 relationship ManyToOne {
-  CaseSession{courtCase(caseNumber)} to CourtCase
+  CaseSession{client (clientName) required} to Client
+  CaseSession{courtCase(caseNumber) required} to CourtCase
+
 }
 
 relationship ManyToOne {
-  CaseDocument{courtCase(caseNumber)} to CourtCase
+  CaseDocument{client (clientName) required} to Client
+  CaseDocument{courtCase(caseNumber) required } to CourtCase
   CaseDocument{User(login)} to User with builtInEntity
 }
 

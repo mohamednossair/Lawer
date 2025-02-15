@@ -35,11 +35,20 @@
   "pagination": "pagination",
   "relationships": [
     {
+      "otherEntityField": "clientName",
+      "otherEntityName": "client",
+      "relationshipName": "client",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
+    },
+    {
       "otherEntityField": "caseNumber",
       "otherEntityName": "courtCase",
       "relationshipName": "courtCase",
       "relationshipSide": "left",
-      "relationshipType": "many-to-one"
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
     },
     {
       "otherEntityField": "login",

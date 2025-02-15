@@ -24,6 +24,7 @@
       "notes": "Notes",
       "createdAt": "Created At",
       "updatedAt": "Updated At",
+      "client": "Client",
       "courtCase": "Court Case"
     }
   }

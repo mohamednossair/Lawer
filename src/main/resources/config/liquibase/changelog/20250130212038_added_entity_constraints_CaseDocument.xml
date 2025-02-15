@@ -10,6 +10,13 @@
     -->
     <changeSet id="20250130212038-2" author="jhipster">
 
+        <addForeignKeyConstraint baseColumnNames="client_id"
+                                 baseTableName="case_document"
+                                 constraintName="fk_case_document__client_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="client"
+                                 />
+
         <addForeignKeyConstraint baseColumnNames="court_case_id"
                                  baseTableName="case_document"
                                  constraintName="fk_case_document__court_case_id"

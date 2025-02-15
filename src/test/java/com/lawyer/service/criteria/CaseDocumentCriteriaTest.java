@@ -80,6 +80,7 @@ class CaseDocumentCriteriaTest {
         caseDocumentCriteria.documentType();
         caseDocumentCriteria.createdAt();
         caseDocumentCriteria.updatedAt();
+        caseDocumentCriteria.clientId();
         caseDocumentCriteria.courtCaseId();
         caseDocumentCriteria.userId();
         caseDocumentCriteria.distinct();
@@ -93,6 +94,7 @@ class CaseDocumentCriteriaTest {
                 condition.apply(criteria.getDocumentType()) &&
                 condition.apply(criteria.getCreatedAt()) &&
                 condition.apply(criteria.getUpdatedAt()) &&
+                condition.apply(criteria.getClientId()) &&
                 condition.apply(criteria.getCourtCaseId()) &&
                 condition.apply(criteria.getUserId()) &&
                 condition.apply(criteria.getDistinct()),
@@ -111,6 +113,7 @@ class CaseDocumentCriteriaTest {
                 condition.apply(criteria.getDocumentType(), copy.getDocumentType()) &&
                 condition.apply(criteria.getCreatedAt(), copy.getCreatedAt()) &&
                 condition.apply(criteria.getUpdatedAt(), copy.getUpdatedAt()) &&
+                condition.apply(criteria.getClientId(), copy.getClientId()) &&
                 condition.apply(criteria.getCourtCaseId(), copy.getCourtCaseId()) &&
                 condition.apply(criteria.getUserId(), copy.getUserId()) &&
                 condition.apply(criteria.getDistinct(), copy.getDistinct()),

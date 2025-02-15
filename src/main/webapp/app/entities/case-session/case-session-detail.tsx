@@ -81,6 +81,10 @@ export const CaseSessionDetail = () => {
             {caseSessionEntity.updatedAt ? <TextFormat value={caseSessionEntity.updatedAt} type="date" format={APP_DATE_FORMAT} /> : null}
           </dd>
           <dt>
+            <Translate contentKey="lawyerApp.caseSession.client">Client</Translate>
+          </dt>
+          <dd>{caseSessionEntity.client ? caseSessionEntity.client.clientName : ''}</dd>
+          <dt>
             <Translate contentKey="lawyerApp.caseSession.courtCase">Court Case</Translate>
           </dt>
           <dd>{caseSessionEntity.courtCase ? caseSessionEntity.courtCase.caseNumber : ''}</dd>

@@ -29,6 +29,10 @@ public class CaseSessionDTO implements Serializable {
 
     private ZonedDateTime updatedAt;
 
+    @NotNull
+    private ClientDTO client;
+
+    @NotNull
     private CourtCaseDTO courtCase;
 
     public Long getId() {
@@ -87,6 +91,14 @@ public class CaseSessionDTO implements Serializable {
         this.updatedAt = updatedAt;
     }
 
+    public ClientDTO getClient() {
+        return client;
+    }
+
+    public void setClient(ClientDTO client) {
+        this.client = client;
+    }
+
     public CourtCaseDTO getCourtCase() {
         return courtCase;
     }
@@ -127,6 +139,7 @@ public class CaseSessionDTO implements Serializable {
             ", notes='" + getNotes() + "'" +
             ", createdAt='" + getCreatedAt() + "'" +
             ", updatedAt='" + getUpdatedAt() + "'" +
+            ", client=" + getClient() +
             ", courtCase=" + getCourtCase() +
             "}";
     }

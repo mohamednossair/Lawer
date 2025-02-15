@@ -32,6 +32,8 @@ public class CaseDocumentCriteria implements Serializable, Criteria {
 
     private ZonedDateTimeFilter updatedAt;
 
+    private LongFilter clientId;
+
     private LongFilter courtCaseId;
 
     private LongFilter userId;
@@ -46,6 +48,7 @@ public class CaseDocumentCriteria implements Serializable, Criteria {
         this.documentType = other.optionalDocumentType().map(StringFilter::copy).orElse(null);
         this.createdAt = other.optionalCreatedAt().map(ZonedDateTimeFilter::copy).orElse(null);
         this.updatedAt = other.optionalUpdatedAt().map(ZonedDateTimeFilter::copy).orElse(null);
+        this.clientId = other.optionalClientId().map(LongFilter::copy).orElse(null);
         this.courtCaseId = other.optionalCourtCaseId().map(LongFilter::copy).orElse(null);
         this.userId = other.optionalUserId().map(LongFilter::copy).orElse(null);
         this.distinct = other.distinct;
@@ -151,6 +154,25 @@ public class CaseDocumentCriteria implements Serializable, Criteria {
         this.updatedAt = updatedAt;
     }
 
+    public LongFilter getClientId() {
+        return clientId;
+    }
+
+    public Optional<LongFilter> optionalClientId() {
+        return Optional.ofNullable(clientId);
+    }
+
+    public LongFilter clientId() {
+        if (clientId == null) {
+            setClientId(new LongFilter());
+        }
+        return clientId;
+    }
+
+    public void setClientId(LongFilter clientId) {
+        this.clientId = clientId;
+    }
+
     public LongFilter getCourtCaseId() {
         return courtCaseId;
     }
@@ -223,6 +245,7 @@ public class CaseDocumentCriteria implements Serializable, Criteria {
             Objects.equals(documentType, that.documentType) &&
             Objects.equals(createdAt, that.createdAt) &&
             Objects.equals(updatedAt, that.updatedAt) &&
+            Objects.equals(clientId, that.clientId) &&
             Objects.equals(courtCaseId, that.courtCaseId) &&
             Objects.equals(userId, that.userId) &&
             Objects.equals(distinct, that.distinct)
@@ -231,7 +254,7 @@ public class CaseDocumentCriteria implements Serializable, Criteria {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, documentName, documentType, createdAt, updatedAt, courtCaseId, userId, distinct);
+        return Objects.hash(id, documentName, documentType, createdAt, updatedAt, clientId, courtCaseId, userId, distinct);
     }
 
     // prettier-ignore
@@ -243,6 +266,7 @@ public class CaseDocumentCriteria implements Serializable, Criteria {
             optionalDocumentType().map(f -> "documentType=" + f + ", ").orElse("") +
             optionalCreatedAt().map(f -> "createdAt=" + f + ", ").orElse("") +
             optionalUpdatedAt().map(f -> "updatedAt=" + f + ", ").orElse("") +
+            optionalClientId().map(f -> "clientId=" + f + ", ").orElse("") +
             optionalCourtCaseId().map(f -> "courtCaseId=" + f + ", ").orElse("") +
             optionalUserId().map(f -> "userId=" + f + ", ").orElse("") +
             optionalDistinct().map(f -> "distinct=" + f + ", ").orElse("") +

@@ -12,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lawyer.IntegrationTest;
 import com.lawyer.domain.CaseDocument;
+import com.lawyer.domain.Client;
 import com.lawyer.domain.CourtCase;
 import com.lawyer.domain.User;
 import com.lawyer.repository.CaseDocumentRepository;
@@ -111,14 +112,35 @@ class CaseDocumentResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static CaseDocument createEntity() {
-        return new CaseDocument()
+    public static CaseDocument createEntity(EntityManager em) {
+        CaseDocument caseDocument = new CaseDocument()
             .documentName(DEFAULT_DOCUMENT_NAME)
             .documentType(DEFAULT_DOCUMENT_TYPE)
             .documentFile(DEFAULT_DOCUMENT_FILE)
             .documentFileContentType(DEFAULT_DOCUMENT_FILE_CONTENT_TYPE)
             .createdAt(DEFAULT_CREATED_AT)
             .updatedAt(DEFAULT_UPDATED_AT);
+        // Add required entity
+        Client client;
+        if (TestUtil.findAll(em, Client.class).isEmpty()) {
+            client = ClientResourceIT.createEntity();
+            em.persist(client);
+            em.flush();
+        } else {
+            client = TestUtil.findAll(em, Client.class).get(0);
+        }
+        caseDocument.setClient(client);
+        // Add required entity
+        CourtCase courtCase;
+        if (TestUtil.findAll(em, CourtCase.class).isEmpty()) {
+            courtCase = CourtCaseResourceIT.createEntity(em);
+            em.persist(courtCase);
+            em.flush();
+        } else {
+            courtCase = TestUtil.findAll(em, CourtCase.class).get(0);
+        }
+        caseDocument.setCourtCase(courtCase);
+        return caseDocument;
     }
 
     /**
@@ -127,19 +149,40 @@ class CaseDocumentResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static CaseDocument createUpdatedEntity() {
-        return new CaseDocument()
+    public static CaseDocument createUpdatedEntity(EntityManager em) {
+        CaseDocument updatedCaseDocument = new CaseDocument()
             .documentName(UPDATED_DOCUMENT_NAME)
             .documentType(UPDATED_DOCUMENT_TYPE)
             .documentFile(UPDATED_DOCUMENT_FILE)
             .documentFileContentType(UPDATED_DOCUMENT_FILE_CONTENT_TYPE)
             .createdAt(UPDATED_CREATED_AT)
             .updatedAt(UPDATED_UPDATED_AT);
+        // Add required entity
+        Client client;
+        if (TestUtil.findAll(em, Client.class).isEmpty()) {
+            client = ClientResourceIT.createUpdatedEntity();
+            em.persist(client);
+            em.flush();
+        } else {
+            client = TestUtil.findAll(em, Client.class).get(0);
+        }
+        updatedCaseDocument.setClient(client);
+        // Add required entity
+        CourtCase courtCase;
+        if (TestUtil.findAll(em, CourtCase.class).isEmpty()) {
+            courtCase = CourtCaseResourceIT.createUpdatedEntity(em);
+            em.persist(courtCase);
+            em.flush();
+        } else {
+            courtCase = TestUtil.findAll(em, CourtCase.class).get(0);
+        }
+        updatedCaseDocument.setCourtCase(courtCase);
+        return updatedCaseDocument;
     }
 
     @BeforeEach
     public void initTest() {
-        caseDocument = createEntity();
+        caseDocument = createEntity(em);
     }
 
     @AfterEach
@@ -554,6 +597,28 @@ class CaseDocumentResourceIT {
 
         // Get all the caseDocumentList where updatedAt is greater than
         defaultCaseDocumentFiltering("updatedAt.greaterThan=" + SMALLER_UPDATED_AT, "updatedAt.greaterThan=" + DEFAULT_UPDATED_AT);
+    }
+
+    @Test
+    @Transactional
+    void getAllCaseDocumentsByClientIsEqualToSomething() throws Exception {
+        Client client;
+        if (TestUtil.findAll(em, Client.class).isEmpty()) {
+            caseDocumentRepository.saveAndFlush(caseDocument);
+            client = ClientResourceIT.createEntity();
+        } else {
+            client = TestUtil.findAll(em, Client.class).get(0);
+        }
+        em.persist(client);
+        em.flush();
+        caseDocument.setClient(client);
+        caseDocumentRepository.saveAndFlush(caseDocument);
+        Long clientId = client.getId();
+        // Get all the caseDocumentList where client equals to clientId
+        defaultCaseDocumentShouldBeFound("clientId.equals=" + clientId);
+
+        // Get all the caseDocumentList where client equals to (clientId + 1)
+        defaultCaseDocumentShouldNotBeFound("clientId.equals=" + (clientId + 1));
     }
 
     @Test

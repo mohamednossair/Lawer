@@ -89,6 +89,11 @@ public class CaseDocumentQueryService extends QueryService<CaseDocument> {
             if (criteria.getUpdatedAt() != null) {
                 specification = specification.and(buildRangeSpecification(criteria.getUpdatedAt(), CaseDocument_.updatedAt));
             }
+            if (criteria.getClientId() != null) {
+                specification = specification.and(
+                    buildSpecification(criteria.getClientId(), root -> root.join(CaseDocument_.client, JoinType.LEFT).get(Client_.id))
+                );
+            }
             if (criteria.getCourtCaseId() != null) {
                 specification = specification.and(
                     buildSpecification(criteria.getCourtCaseId(), root ->
